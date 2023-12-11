@@ -16,10 +16,11 @@ LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-main-d -lsfml-network-d -lsfml-w
 INCLUDEPATH += "C:\labs again\tech_prog\Course project\SFML-2.3.2\include"
 
 SOURCES += main.cpp \
-    classes.cpp \
     map.cpp \
     entity.cpp \
-    player.cpp
+    player.cpp \
+    enemy.cpp \
+    bullet.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -30,5 +31,6 @@ HEADERS += \
     player.h \
     enemy.h \
     bullet.h \
-    libs.h
+    libs.h \
+    arrmaps.h
 
