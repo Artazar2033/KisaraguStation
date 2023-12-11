@@ -1,4 +1,7 @@
-#include "classes.cpp" //подключили код с классами сущностей
+#include "bullet.h"
+#include "enemy.h"
+#include "player.h"
+#include "arrmaps.h"
 
 int main()
 {
@@ -19,29 +22,6 @@ int main()
     map.loadFromImage(map_image);//заряжаем текстуру картинкой    
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
-
-    string ArrMap1[HEIGHT_MAP] = {
-        "0000000000000000000000000",
-        "0                       0",
-        "0    s    s    f        0",
-        "0                       0",
-        "0                  f    0",
-        "0                       0",
-        "0      s                0",
-        "0         00000     h   0",
-        "0  h        0           0",
-        "0           0           0",
-        "0            f          0",
-        "0                       0",
-        "0       s               0",
-        "0                     h 0",
-        "0                       0",
-        "0  f          s         0",
-        "0                       0",
-        "0      h   f            0",
-        "0                       0",
-        "0000000000000000000000000",
-    };
 
     Map map1(ArrMap1);
 
@@ -91,7 +71,7 @@ int main()
         clock.restart();
         time /= 800;
         createObjectForMapTimer += time;//наращиваем таймер
-        if (createObjectForMapTimer>1000){
+        if (createObjectForMapTimer>3000){
             map1.randomMapGenerate();//генерация камней
             createObjectForMapTimer = 0;//обнуляем таймер
         }
