@@ -71,7 +71,7 @@ int main()
         clock.restart();
         time /= 800;
         createObjectForMapTimer += time;//наращиваем таймер
-        if (createObjectForMapTimer>3000){
+        if (createObjectForMapTimer>1000){
             map1.randomMapGenerate();//генерация камней
             createObjectForMapTimer = 0;//обнуляем таймер
         }
