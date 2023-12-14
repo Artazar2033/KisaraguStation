@@ -5,6 +5,13 @@
 
 int main()
 {
+    //список констант
+    const int PLAYER_DAMAGE = 40; //урон от пули по врагу
+    const int FIRE_SPEED = 500; //скорострельность в мс
+    int roomNumber = 2;
+
+    //MainMenu.start();
+
     VideoMode desktop = VideoMode::getDesktopMode();
 
     RenderWindow window(VideoMode(800, 640, desktop.bitsPerPixel), "Station Demo");
@@ -24,6 +31,9 @@ int main()
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
     Map map1(ArrMap1);
+    Map map2(ArrMap2);
+    Map map3(ArrMap3);
+    Map map4(ArrMap4);
 
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
@@ -62,6 +72,10 @@ int main()
     }
 
     int createObjectForMapTimer = 0;//Переменная под время для генерирования камней
+    //int hpDownEnemiesTimer = 0;//Переменная под время для неуязвимости врагов после попадания пули
+    int hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
+    int createBulletsTimer = 0;//Переменная под время для задержки выстрела
+
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds();
@@ -70,11 +84,16 @@ int main()
         //оно не обновляет логику игры
         clock.restart();
         time /= 800;
-        createObjectForMapTimer += time;//наращиваем таймер
-        if (createObjectForMapTimer>1000){
-            map1.randomMapGenerate();//генерация камней
-            createObjectForMapTimer = 0;//обнуляем таймер
-        }
+
+        createObjectForMapTimer += time;//наращиваем таймеры
+        createBulletsTimer += time;
+        //hpDownEnemiesTimer += time;
+        hpDownPlayerTimer += time;
+
+        //if (createObjectForMapTimer>1000){
+        //    map1.randomMapGenerate();//генерация камней
+        //    createObjectForMapTimer = 0;//обнуляем таймер
+        //}
 
         Event event;
         while (window.pollEvent(event))
@@ -84,10 +103,12 @@ int main()
             //стреляем по нажатию клавиши "P"
             if (event.type == Event::KeyPressed)
             {
-                if (event.key.code == Keyboard::E)
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
+                                                                        //1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                                  p.state, map1.GetTileMap()));
+                    createBulletsTimer = 0;//обнуляем таймер
                 }
             }
         }
@@ -116,47 +137,87 @@ int main()
             if ((*it)-> life == false) { it = enemies.erase(it); }
             else it++;//и идем курсором (итератором) к след объекту.
         }
+
         //Проверка пересечения игрока с врагами
-        //Если пересечение произошло, то "health = 0", игрок обездвижевается и
-        //выводится сообщение "you are lose"
+        //Если пересечение произошло, то "health -= 20". После того, как здоровье опустится до 0,
+        //игрок обездвиживается и выводится сообщение "you are lose"
         if (p.life == true){//если игрок жив
             for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
                 if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy"))
                 {
-                    //p.health = 0;
-                    cout << "you lose!\n";
+                    if (hpDownPlayerTimer>1000){
+                        p.health -= 20;
+                        cout << "you take the damage!\n";
+                        hpDownPlayerTimer = 0;//обнуляем таймер
+                    }
+                }
+            }
+        }
+        //пересечение пули с врагом
+        for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
+            for (b = Bullets.begin(); b != Bullets.end(); b++){//по списку пуль
+                if (((*b)->getRect().intersects((*it)->getRect())) &&
+                    ((*it)->name == "EasyEnemy") && ((*b)->name == "Bullet"))
+                {
+                    cout << "Exellent hit!\n";
+
+                    //при попадании пули у врага отнимается здоровье
+                    (*it)-> health -= PLAYER_DAMAGE;
+                    if ((*it)-> health <= 0) {
+                        (*it)-> life = false;
+                        cout << "Enemy destroyed!\n";
+                    }
+
+                    (*b)-> life = false;
                 }
             }
         }
 
-        //пересечение пули с врагом
-        for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
-            for (b = Bullets.begin(); b != Bullets.end(); b++){//по списку пуль
-            if (((*b)->getRect().intersects((*it)->getRect())) &&
-                    ((*it)->name == "EasyEnemy") && ((*b)->name == "Bullet"))
-            {
-                (*it)-> life = false;
-                (*b)-> life = false;
-                cout << "enemy destroyed\n";
-            }
-            }
-        }
-
         window.clear();
-        /////////////////////////////Рисуем карту/////////////////////
 
-        // Map1.draw(s_map);
-        for (int i = 0; i < HEIGHT_MAP; i++)
-            for (int j = 0; j < WIDTH_MAP; j++)
-            {
-                if (map1.TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(0, 0, 32, 32));
-                if (map1.TileMap[i][j] == 's') s_map.setTextureRect(IntRect(32, 0, 32, 32));
-                if (map1.TileMap[i][j] == '0') s_map.setTextureRect(IntRect(64, 0, 32, 32));
-                if (map1.TileMap[i][j] == 'f') s_map.setTextureRect(IntRect(96, 0, 32, 32));//цветок
-                if (map1.TileMap[i][j] == 'h') s_map.setTextureRect(IntRect(128, 0, 32, 32));//сердце
-                s_map.setPosition(j * 32, i * 32);
-                window.draw(s_map);
-            }
+        //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
+        switch (roomNumber)
+        {
+        case 1:
+            map1.draw(&s_map, &window);
+            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
+                {(*it)-> TileMap = map1.GetTileMap();}
+
+            for (it = Bullets.begin(); it != Bullets.end(); it++)
+                {(*it)-> TileMap = map1.GetTileMap();}
+
+            p.TileMap = map1.GetTileMap();
+            break;
+        case 2: map2.draw(&s_map, &window);
+            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
+                {(*it)-> TileMap = map2.GetTileMap();}
+
+            for (it = Bullets.begin(); it != Bullets.end(); it++)
+                {(*it)-> TileMap = map2.GetTileMap();}
+
+            p.TileMap = map2.GetTileMap();
+            break;
+        case 3: map3.draw(&s_map, &window);
+            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
+                {(*it)-> TileMap = map3.GetTileMap();}
+
+            for (it = Bullets.begin(); it != Bullets.end(); it++)
+                {(*it)-> TileMap = map3.GetTileMap();}
+
+            p.TileMap = map3.GetTileMap();
+            break;
+        case 4: map4.draw(&s_map, &window);
+            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
+                {(*it)-> TileMap = map4.GetTileMap();}
+
+            for (it = Bullets.begin(); it != Bullets.end(); it++)
+                {(*it)-> TileMap = map4.GetTileMap();}
+
+            p.TileMap = map4.GetTileMap();
+            break;
+        }           //сюда вместо s_map можно просто подать указатель на другой спрайт,
+                    //и тогда карта будет выглядеть по-другому
+
         //объявили переменную здоровья и времени
         ostringstream playerHealthString, gameTimeString, playerScoreString;
         playerHealthString << p.health; gameTimeString << gameTime;//формируем строку
@@ -165,7 +226,9 @@ int main()
                        gameTimeString.str()+ "\nScore: " + playerScoreString.str());//задаем строку тексту
         text.setPosition(40, 27);//задаем позицию текста
         window.draw(text);//рисуем этот текст
+
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
+
         //рисуем врагов
         for (it = enemies.begin(); it != enemies.end(); it++)
         {
@@ -179,6 +242,10 @@ int main()
                 window.draw((*it)->sprite); //рисуем объекты
         }
         window.display();
+
+        //при смерти игрока
+        if (p.health == 0) cout << "You are dead;(\n"; //выполняется много раз ;(
+
     }
     return 0;
 }
