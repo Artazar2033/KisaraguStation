@@ -14,6 +14,7 @@ public:
     Map();
     void randomMapGenerate();
     string* GetTileMap();
+    void draw(Sprite* s_map, RenderWindow* window);
 };
 
 #endif // MAP
