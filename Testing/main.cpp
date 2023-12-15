@@ -8,7 +8,7 @@ int main()
     //список констант
     const int PLAYER_DAMAGE = 40; //урон от пули по врагу
     const int FIRE_SPEED = 500; //скорострельность в мс
-    int roomNumber = 2;
+    int roomNumber = 1;
 
     //MainMenu.start();
 
@@ -175,6 +175,7 @@ int main()
 
         window.clear();
 
+        roomNumber = p.numberOfRoom;
         //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
         switch (roomNumber)
         {

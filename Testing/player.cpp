@@ -2,6 +2,7 @@
 
 Player::Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap)
                 :Entity(image, X, Y, W, H, Name, MapMap){
+    numberOfRoom = 1; //начальная комната - 1
     playerScore = 0;
     state = stay;
     if (name == "Player1"){
@@ -34,6 +35,13 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
     for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
         for (int j = x / 32; j<(x + w) / 32; j++)
         {
+
+            if (TileMap[i][j] == '?')//если элемент - дверь
+            {
+                teleport(&i, &j, &numberOfRoom);
+                cout << "You're front of the door" << endl;
+            }
+
             if (TileMap[i][j] == '0')//если элемент тайлик земли
             {
                 if (Dy > 0) { y = i * 32 - h; dy = 0; }//по Y
@@ -54,6 +62,41 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
                 TileMap[i][j] = ' ';//убрали сердечко
             }
         }
+}
+
+void Player::teleport(int* i, int* j, int* num) {
+    int numb = *num;
+    switch (numb) {
+    case 1:
+        x = 2 * 32;
+        *num = 2;
+        break;
+    case 2:
+        if (*i == 10){ //левая дверь
+            x = 20 * 32;
+            *num = 1;
+        }
+        if (*i == 18){ //нижняя дверь
+            y = 2 * 32;
+            //x = 10 * 32;
+            *num = 3;
+        }
+        break;
+    case 3:
+        if (*i <= 4){ //верхняя дверь
+            y = 10 * 32;
+            *num = 2;
+        }
+        if (*i == 10){ //правая дверь
+            x = 2 * 32;
+            *num = 4;
+        }
+        break;
+    case 4:
+        x = 23 * 32;
+        *num = 3;
+        break;
+    }
 }
 
 void Player::update(float time) //метод "оживления/обновления" объекта класса.
