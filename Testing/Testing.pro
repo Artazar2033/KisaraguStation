@@ -16,11 +16,20 @@ LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-main-d -lsfml-network-d -lsfml-w
 INCLUDEPATH += "C:\Games\GitWorks\KisaraguStation\KisaraguStation\SFML-2.3.2\include"
 
 SOURCES += main.cpp \
-    classes.cpp
+    bullet.cpp \
+    enemy.cpp \
+    entity.cpp \
+    player.cpp \
+    map.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
 
 HEADERS += \
-    map.h
-
+    map.h \
+    bullet.h \
+    libs.h \
+    arrmaps.h \
+    entity.h \
+    enemy.h \
+    player.h
