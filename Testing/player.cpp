@@ -36,7 +36,7 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
         for (int j = x / 32; j<(x + w) / 32; j++)
         {
 
-            if (TileMap[i][j] == '?')//если элемент - дверь
+            if ((TileMap[i][j+1] == '?')||TileMap[i][j+1] == '!')//если элемент - дверь
             {
                 teleport(&i, &j, &numberOfRoom);
                 cout << "You're front of the door" << endl;
