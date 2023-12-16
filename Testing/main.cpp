@@ -100,10 +100,10 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
-            //стреляем по нажатию клавиши "P"
+            //стреляем по нажатию клавиши "E"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
+                if ((event.key.code == Keyboard::E))// && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
                                                                         //1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
@@ -134,7 +134,11 @@ int main()
         //Проверяем список на наличие "мертвых" врагов и удаляем их
         for (it = enemies.begin(); it != enemies.end(); )//говорим что проходимся от начала до конца
         {// если этот объект мертв, то удаляем его
-            if ((*it)-> life == false) { it = enemies.erase(it); }
+            if ((*it)-> life == false)
+            {
+                (*it)-> SpawnCoin();
+                it = enemies.erase(it);
+            }
             else it++;//и идем курсором (итератором) к след объекту.
         }
 
@@ -245,7 +249,11 @@ int main()
         window.display();
 
         //при смерти игрока
-        if (p.health == 0) cout << "You are dead;(\n"; //выполняется много раз ;(
+        if (p.health == 0)
+        {
+            cout << "You are dead;(\n"; //выполняется много раз ;(
+            break;
+        }
 
     }
     return 0;

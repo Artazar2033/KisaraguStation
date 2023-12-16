@@ -17,6 +17,8 @@ public:
     void teleport(int* i, int* j, int* num); //метод проверки столкновения с комнатой
 
     void update(float time); //метод "оживления/обновления" объекта класса.
+
+    void SpawnCoin(); //метод спавна монет (не используется)
 };
 
 #endif // PLAYER
