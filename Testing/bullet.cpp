@@ -11,10 +11,10 @@ Bullet::Bullet(Image &image, float X, float Y, int W, int H, string Name, int di
     //выше инициализация в конструкторе
 }
 
-void Bullet::SpawnCoin() //метод спавна монет (не используется)
+/*void Bullet::SpawnCoin() //метод спавна монет (не используется)
 {
     //пусто
-}
+}*/
 
 void Bullet::update(float time)
 {
@@ -38,7 +38,9 @@ void Bullet::update(float time)
         for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
             for (int j = x / 32; j < (x + w) / 32; j++)
             {
-                if (TileMap[i][j] == '0')//если элемент наш тайлик земли, то
+                if ((TileMap[i][j] == '0') || (TileMap[i][j] == '?') ||
+                        (TileMap[i][j] == '!') || (TileMap[i][j] == '(') || (TileMap[i][j] == ')'))
+                //если элемент наш тайлик земли или двери, то
                     life = false;// то пуля умирает
             }
         sprite.setPosition(x + w / 2, y + h / 2);//задается позицию пули
