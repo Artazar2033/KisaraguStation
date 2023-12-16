@@ -44,7 +44,7 @@ int main()
 
     Image heroImage;
     heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
-    heroImage.createMaskFromColor(Color(255, 255, 255));
+    //heroImage.createMaskFromColor(Color(255, 255, 255));
 
     Image easyEnemyImage;
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
@@ -55,12 +55,13 @@ int main()
     BulletImage.createMaskFromColor(Color(255, 255, 255));
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
-    Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    Player p(heroImage, 100, 100, 80, 96, "Player1", map1.GetTileMap());//объект класса игрока
 
-    list<Entity*> enemies; //список врагов
+    list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
-    list<Entity*>::iterator it;//итератор чтобы проходить по элементам списка
-    list<Entity*>::iterator b;//итератор чтобы проходить по элементам списка
+    list<Entity*>::iterator it;//итератор класса Entity
+    //list<Entity*>::iterator b;//итератор чтобы проходить по элементам списка
+    list<Enemy*>::iterator eit;//итератор по классу Enemy
 
     int createObjectForMapTimer = 0;//Переменная под время для генерирования камней
     //int hpDownEnemiesTimer = 0;//Переменная под время для неуязвимости врагов после попадания пули
@@ -119,9 +120,9 @@ int main()
 
         p.update(time); //оживляем объект “p” класса “Player”
         //оживляем врагов
-        for (it = enemies.begin(); it != enemies.end(); it++)
+        for (eit = enemies.begin(); eit != enemies.end(); eit++)
         {
-            (*it)->update(time); //запускаем метод update()
+            (*eit)->update(time); //запускаем метод update()
         }
         //оживляем пули
         for (it = Bullets.begin(); it != Bullets.end(); it++)
@@ -136,22 +137,22 @@ int main()
             else it++;//и идем курсором (итератором) к след объекту.
         }
         //Проверяем список на наличие "мертвых" врагов и удаляем их
-        for (it = enemies.begin(); it != enemies.end(); )//говорим что проходимся от начала до конца
+        for (eit = enemies.begin(); eit != enemies.end(); )//говорим что проходимся от начала до конца
         {// если этот объект мертв, то удаляем его
-            if ((*it)-> life == false)
+            if ((*eit)-> life == false)
             {
-                (*it)-> SpawnCoin();
-                it = enemies.erase(it);
+                (*eit)-> SpawnCoin();
+                eit = enemies.erase(eit);
             }
-            else it++;//и идем курсором (итератором) к след объекту.
+            else eit++;//и идем курсором (итератором) к след объекту.
         }
 
         //Проверка пересечения игрока с врагами
         //Если пересечение произошло, то "health -= 20". После того, как здоровье опустится до 0,
         //игрок обездвиживается и выводится сообщение "you are lose"
         if (p.life == true){//если игрок жив
-            for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
-                if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy"))
+            for (eit = enemies.begin(); eit != enemies.end(); eit++){//бежим по списку врагов
+                if ((p.getRect().intersects((*eit)->getRect())) && ((*eit)->name == "EasyEnemy"))
                 {
                     if (hpDownPlayerTimer>1000){
                         p.health -= 20;
@@ -162,21 +163,21 @@ int main()
             }
         }
         //пересечение пули с врагом
-        for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
-            for (b = Bullets.begin(); b != Bullets.end(); b++){//по списку пуль
-                if (((*b)->getRect().intersects((*it)->getRect())) &&
-                    ((*it)->name == "EasyEnemy") && ((*b)->name == "Bullet"))
+        for (eit = enemies.begin(); eit != enemies.end(); eit++){//бежим по списку врагов
+            for (it = Bullets.begin(); it != Bullets.end(); it++){//по списку пуль
+                if (((*it)->getRect().intersects((*eit)->getRect())) &&
+                    ((*eit)->name == "EasyEnemy") && ((*it)->name == "Bullet"))
                 {
                     cout << "Exellent hit!\n";
 
                     //при попадании пули у врага отнимается здоровье
-                    (*it)-> health -= PLAYER_DAMAGE;
-                    if ((*it)-> health <= 0) {
-                        (*it)-> life = false;
+                    (*eit)-> health -= PLAYER_DAMAGE;
+                    if ((*eit)-> health <= 0) {
+                        (*eit)-> life = false;
                         enemiesCount -= 1; //уменьшаем количество врагов в игре
                         cout << "Enemy destroyed!\n";
                     }
-                    (*b)-> life = false;
+                    (*it)-> life = false;
                 }
             }
         }
@@ -193,8 +194,8 @@ int main()
         {
         case 1:
             map1.draw(&s_map, &window);
-            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
-                {(*it)-> TileMap = map1.GetTileMap();}
+            for (eit = enemies.begin(); eit != enemies.end(); eit++)//говорим что проходимся от начала до конца
+                {(*eit)-> TileMap = map1.GetTileMap();}
 
             for (it = Bullets.begin(); it != Bullets.end(); it++)
                 {(*it)-> TileMap = map1.GetTileMap();}
@@ -202,8 +203,8 @@ int main()
             p.TileMap = map1.GetTileMap();
             break;
         case 2: map2.draw(&s_map, &window);
-            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
-                {(*it)-> TileMap = map2.GetTileMap();}
+            for (eit = enemies.begin(); eit != enemies.end(); eit++)//говорим что проходимся от начала до конца
+                {(*eit)-> TileMap = map2.GetTileMap();}
 
             for (it = Bullets.begin(); it != Bullets.end(); it++)
                 {(*it)-> TileMap = map2.GetTileMap();}
@@ -211,8 +212,8 @@ int main()
             p.TileMap = map2.GetTileMap();
             break;
         case 3: map3.draw(&s_map, &window);
-            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
-                {(*it)-> TileMap = map3.GetTileMap();}
+            for (eit = enemies.begin(); eit != enemies.end(); eit++)//говорим что проходимся от начала до конца
+                {(*eit)-> TileMap = map3.GetTileMap();}
 
             for (it = Bullets.begin(); it != Bullets.end(); it++)
                 {(*it)-> TileMap = map3.GetTileMap();}
@@ -220,8 +221,8 @@ int main()
             p.TileMap = map3.GetTileMap();
             break;
         case 4: map4.draw(&s_map, &window);
-            for (it = enemies.begin(); it != enemies.end(); it++)//говорим что проходимся от начала до конца
-                {(*it)-> TileMap = map4.GetTileMap();}
+            for (eit = enemies.begin(); eit != enemies.end(); eit++)//говорим что проходимся от начала до конца
+                {(*eit)-> TileMap = map4.GetTileMap();}
 
             for (it = Bullets.begin(); it != Bullets.end(); it++)
                 {(*it)-> TileMap = map4.GetTileMap();}
@@ -243,10 +244,10 @@ int main()
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
 
         //рисуем врагов
-        for (it = enemies.begin(); it != enemies.end(); it++)
+        for (eit = enemies.begin(); eit != enemies.end(); eit++)
         {
-            if ((*it)->life) //если враги живы
-                window.draw((*it)->sprite); //рисуем
+            if ((*eit)->life) //если враги живы
+                window.draw((*eit)->sprite); //рисуем
         }
         //рисуем пули
         for (it = Bullets.begin(); it != Bullets.end(); it++)
