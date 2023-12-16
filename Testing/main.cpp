@@ -9,6 +9,9 @@ int main()
     const int PLAYER_DAMAGE = 40; //урон от пули по врагу
     const int FIRE_SPEED = 500; //скорострельность в мс
     int roomNumber = 1;
+    const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
+    bool enemyOnMap = true;
+    int enemiesCount = 0; //текущее количество врагов в игре
 
     //MainMenu.start();
 
@@ -59,18 +62,6 @@ int main()
     list<Entity*>::iterator it;//итератор чтобы проходить по элементам списка
     list<Entity*>::iterator b;//итератор чтобы проходить по элементам списка
 
-    const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
-    int enemiesCount = 0; //текущее количество врагов в игре
-    //Заполняем список объектами врагами
-    for (int i = 0; i < ENEMY_COUNT; i++)
-    {
-        float xr = 150 + rand() % 500; // случайная координата врага на поле игры по оси “x”
-        float yr = 150 + rand() % 350; // случайная координата врага на поле игры по оси “y”
-        //создаем врагов и помещаем в список
-        enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
-        enemiesCount += 1; //увеличили счётчик врагов
-    }
-
     int createObjectForMapTimer = 0;//Переменная под время для генерирования камней
     //int hpDownEnemiesTimer = 0;//Переменная под время для неуязвимости врагов после попадания пули
     int hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
@@ -111,6 +102,19 @@ int main()
                     createBulletsTimer = 0;//обнуляем таймер
                 }
             }
+        }
+
+        if (enemyOnMap){ //Если ещё не были созданы на текущей карте, то создаём
+            //Заполняем список объектами врагами
+            for (int i = 0; i < ENEMY_COUNT; i++)
+            {
+                float xr = 150 + rand() % 500; // случайная координата врага на поле игры по оси “x”
+                float yr = 150 + rand() % 350; // случайная координата врага на поле игры по оси “y”
+                //создаем врагов и помещаем в список
+                enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
+                enemiesCount += 1; //увеличили счётчик врагов
+            }
+        enemyOnMap = false;
         }
 
         p.update(time); //оживляем объект “p” класса “Player”
@@ -165,9 +169,9 @@ int main()
                     (*it)-> health -= PLAYER_DAMAGE;
                     if ((*it)-> health <= 0) {
                         (*it)-> life = false;
+                        enemiesCount -= 1; //уменьшаем количество врагов в игре
                         cout << "Enemy destroyed!\n";
                     }
-
                     (*b)-> life = false;
                 }
             }
@@ -175,7 +179,11 @@ int main()
 
         window.clear();
 
-        roomNumber = p.numberOfRoom;
+        if ((roomNumber != p.numberOfRoom)) //&&(enemiesCount==0))
+        {
+            roomNumber = p.numberOfRoom;
+            enemyOnMap = true;
+        }
         //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
         switch (roomNumber)
         {
@@ -242,11 +250,8 @@ int main()
             if ((*it)->life) //если пули живы
                 window.draw((*it)->sprite); //рисуем объекты
         }
+
         window.display();
-
-        //при смерти игрока
-        if (p.health == 0) cout << "You are dead;(\n"; //выполняется много раз ;(
-
     }
     return 0;
 }
