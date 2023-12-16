@@ -21,6 +21,7 @@ public:
     Entity(Image &image, float X, float Y, int W, int H, string Name, string* MapMap);
     FloatRect getRect();//метод получения прямоугольника
     virtual void update(float time) = 0;
+    virtual void SpawnCoin() = 0;
 };
 
 #endif // ENTITY

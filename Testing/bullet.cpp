@@ -11,6 +11,11 @@ Bullet::Bullet(Image &image, float X, float Y, int W, int H, string Name, int di
     //выше инициализация в конструкторе
 }
 
+void Bullet::SpawnCoin() //метод спавна монет (не используется)
+{
+    //пусто
+}
+
 void Bullet::update(float time)
 {
     switch (direction)
