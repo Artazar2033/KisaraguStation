@@ -8,10 +8,11 @@ const int WIDTH_MAP = 25;//размер карты ширина
 
 class Map{
 public:
+    int number;
     string TileMap[HEIGHT_MAP]; // = массив с маской карты (тогда использовать конструктор без параметров)
-
-    Map(string abs[HEIGHT_MAP]);
-    Map();
+    bool isPassed;
+    Map(string abs[HEIGHT_MAP], int numb);
+    Map(int numb);
     void randomMapGenerate();
     string* GetTileMap();
     void draw(Sprite* s_map, RenderWindow* window);
