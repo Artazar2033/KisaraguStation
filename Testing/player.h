@@ -17,6 +17,8 @@ public:
     void checkCollisionWithDoor();
 
     void update(float time); //метод "оживления/обновления" объекта класса.
+
+    void gainCoin();
 };
 
 #endif // PLAYER
