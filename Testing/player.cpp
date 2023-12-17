@@ -13,6 +13,11 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
     }
 }
 
+/*void Player::SpawnCoin() //метод спавна монет (не используется)
+{
+    //пусто
+}*/
+
 void Player::control(){
     if (Keyboard::isKeyPressed(Keyboard::A)) {
         state = left;
