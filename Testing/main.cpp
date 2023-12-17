@@ -10,7 +10,7 @@ int main()
     const int FIRE_SPEED = 500; //скорострельность в мс
     int roomNumber = 1;
     const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
-    bool enemyOnMap = true;
+    bool enemyAlsoCreatedOnMap = true;
     int enemiesCount = 0; //текущее количество врагов в игре
 
     //MainMenu.start();
@@ -33,10 +33,10 @@ int main()
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    Map map1(ArrMap1);
-    Map map2(ArrMap2);
-    Map map3(ArrMap3);
-    Map map4(ArrMap4);
+    Map map1(ArrMap1, 1);
+    Map map2(ArrMap2, 2);
+    Map map3(ArrMap3, 3);
+    Map map4(ArrMap4, 4);
 
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
@@ -74,7 +74,7 @@ int main()
         //секундах идёт вперед, пока жив игрок. Перезагружать как time его не надо.
         //оно не обновляет логику игры
         clock.restart();
-        time /= 800;
+        time /= 700;
 
         createObjectForMapTimer += time;//наращиваем таймеры
         createBulletsTimer += time;
@@ -91,11 +91,11 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
-            //стреляем по нажатию клавиши "P"
+            //стреляем по нажатию клавиши "E"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
-                                                                        //1 секунды, то пуля не рождается
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))
+                    //если нарастили меньше 1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                                  p.state, map1.GetTileMap()));
@@ -104,7 +104,7 @@ int main()
             }
         }
 
-        if (enemyOnMap){ //Если ещё не были созданы на текущей карте, то создаём
+        if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
             //Заполняем список объектами врагами
             for (int i = 0; i < ENEMY_COUNT; i++)
             {
@@ -114,7 +114,7 @@ int main()
                 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
                 enemiesCount += 1; //увеличили счётчик врагов
             }
-        enemyOnMap = false;
+        enemyAlsoCreatedOnMap = false;
         }
 
         p.update(time); //оживляем объект “p” класса “Player”
@@ -179,10 +179,32 @@ int main()
 
         window.clear();
 
-        if ((roomNumber != p.numberOfRoom)) //&&(enemiesCount==0))
+        if (enemiesCount==0) p.killAllEnemies = true;
+        if (roomNumber != p.numberOfRoom) //эти флаги меняются только при смене комнаты
         {
-            roomNumber = p.numberOfRoom;
-            enemyOnMap = true;
+            switch (roomNumber) { //p.numberOfRoom обновляется только если все враги в комнате убиты.
+            case 1: map1.isPassed = true;
+                break;
+            case 2: map2.isPassed = true;
+                break;
+            case 3: map3.isPassed = true;
+                break;
+            case 4: map4.isPassed = true;
+                break;
+            }
+
+            roomNumber = p.numberOfRoom; //обновляем комнату
+
+            switch (roomNumber) { //если эта комната была пройдена
+            case 1: if (!map1.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 2: if (!map2.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 3: if (!map3.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 4: if (!map4.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            }
         }
         //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
         switch (roomNumber)

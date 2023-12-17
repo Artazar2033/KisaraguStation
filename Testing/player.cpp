@@ -3,6 +3,7 @@
 Player::Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap)
                 :Entity(image, X, Y, W, H, Name, MapMap){
     numberOfRoom = 1; //начальная комната - 1
+    killAllEnemies = false;
     playerScore = 0;
     state = stay;
     if (name == "Player1"){
@@ -82,7 +83,7 @@ void Player::checkCollisionWithDoor(){
             switch (numb) {
                 case 1:
                     nextRoom = 2; //дверь всегда только справа
-                    oldJ = 23;
+                    oldJ = WIDTH_MAP - 2;
                     oldI = HEIGHT_MAP/2 + 2;
                     break;
                 case 2:
@@ -120,16 +121,19 @@ void Player::checkCollisionWithDoor(){
 
     // Обработка перехода в следующую комнату
     if (nextRoom != -1) {
-        numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
+        if (killAllEnemies){
+            numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
 
-        int oldX = (oldJ * 32);  // X-координата центра двери
-        int oldY = (oldI * 32);  // Y-координата центра двери
+            int oldX = (oldJ * 32);  // X-координата центра двери
+            int oldY = (oldI * 32);  // Y-координата центра двери
 
-        // Вычисление новых координат в зависимости ОТ СТАРЫХ
-        x = (WIDTH_MAP)*32 - oldX;
-        y = (HEIGHT_MAP)*32 - oldY;
+            // Вычисление новых координат в зависимости ОТ СТАРЫХ
+            x = (WIDTH_MAP)*32 - oldX;
+            y = (HEIGHT_MAP)*32 - oldY;
 
-        cout << "You're in front of the door" << endl;
+            cout << "You're in front of the door" << endl;
+        }
+        else {cout << "You should kill the enemies first!" << endl;}
     }
 }
 
