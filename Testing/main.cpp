@@ -17,7 +17,7 @@ int main()
 
     VideoMode desktop = VideoMode::getDesktopMode();
 
-    RenderWindow window(VideoMode(800, 640, desktop.bitsPerPixel), "Station Demo");
+    RenderWindow window(VideoMode(WIDTH_MAP*32, HEIGHT_MAP*32, desktop.bitsPerPixel), "Station Demo");
 
     Font font;//шрифт
     font.loadFromFile("MP Manga.ttf");//передаем нашему шрифту файл шрифта
@@ -55,7 +55,7 @@ int main()
     BulletImage.createMaskFromColor(Color(255, 255, 255));
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
-    Player p(heroImage, 100, 100, 80, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    Player p(heroImage, 70, 70, 80, 96, "Player1", map1.GetTileMap());//объект класса игрока
 
     list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
