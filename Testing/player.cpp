@@ -100,7 +100,7 @@ void Player::checkCollisionWithDoor(){
                     else { //дверь снизу
                         nextRoom = 3;
                         oldJ = WIDTH_MAP/2 + 2; // x
-                        oldI = 18; // y
+                        oldI = HEIGHT_MAP - 2; // y
                     }
                     break;
                 case 3:
@@ -111,7 +111,7 @@ void Player::checkCollisionWithDoor(){
                     }
                     else {//дверь справа
                         nextRoom = 4;
-                        oldJ = 23;
+                        oldJ = WIDTH_MAP - 2;
                         oldI = HEIGHT_MAP/2 + 2;
                     }
                     break;
