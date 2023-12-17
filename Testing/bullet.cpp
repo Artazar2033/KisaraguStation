@@ -33,7 +33,7 @@ void Bullet::update(float time)
         for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
             for (int j = x / 32; j < (x + w) / 32; j++)
             {
-                if (TileMap[i][j] == '0')//если элемент наш тайлик земли, то
+                if (TileMap[i][j] == '0') //если элемент тайлик земли или дверь, то
                     life = false;// то пуля умирает
             }
         sprite.setPosition(x + w / 2, y + h / 2);//задается позицию пули
