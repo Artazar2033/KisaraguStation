@@ -189,12 +189,11 @@ void Player::update(float time) //метод "оживления/обновле�
 }
 
 
-void Player::gainCoin(){
+/*void Player::gainCoin(){
      playerScore++;
 }
 
 void GainLife() {
         {
             health += 20;
-        }
-
+        }*/
