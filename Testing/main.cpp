@@ -28,9 +28,9 @@ int main()
     text.setStyle(Text::Bold);//жирный текст.
 
     Image map_image;//объект изображения для карты
-    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты    
+    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты
     Texture map;//текстура карты
-    map.loadFromImage(map_image);//заряжаем текстуру картинкой    
+    map.loadFromImage(map_image);//заряжаем текстуру картинкой
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
@@ -62,7 +62,7 @@ int main()
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
     Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
-    VendingMachine vm(VendingMachineImage, 0, 0, 150, 150,"vm", map1.GetTileMap());
+    VendingMachine vm(VendingMachineImage, 0, 230, 150, 150, "vm", map1.GetTileMap()); //автомат с едой
 
     list<Entity*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
@@ -112,7 +112,6 @@ int main()
                 }
             }
         }
-        }
 
         if (enemyOnMap){ //Если ещё не были созданы на текущей карте, то создаём
             //Заполняем список объектами врагами
@@ -129,6 +128,9 @@ int main()
 
         p.update(time); //оживляем объект “p” класса “Player”
         //оживляем врагов
+        if (roomNumber == 1)
+            vm.update(time);
+
         for (it = enemies.begin(); it != enemies.end(); it++)
         {
             (*it)->update(time); //запускаем метод update()
@@ -270,4 +272,5 @@ int main()
     }
     return 0;
 }
+
 

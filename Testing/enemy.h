@@ -1,7 +1,7 @@
 #ifndef ENEMY
 #define ENEMY
 
-# include "entity.h"
+#include "entity.h"
 
 ////////////////////////////КЛАСС ВРАГА////////////////////////
 class Enemy :public Entity{
