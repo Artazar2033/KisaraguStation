@@ -2,6 +2,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "arrmaps.h"
+#include "vendingmachine.h"
 
 int main()
 {
@@ -37,6 +38,7 @@ int main()
     Map map2(ArrMap2);
     Map map3(ArrMap3);
     Map map4(ArrMap4);
+    //Map map5(ArrMap5);  // комната для хранения торгового автомата
 
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
@@ -45,6 +47,10 @@ int main()
     Image heroImage;
     heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     heroImage.createMaskFromColor(Color(255, 255, 255));
+
+    Image VendingMachineImage;//изображение торгового автомата для восстановления жизни
+    VendingMachineImage.loadFromFile("images/vending.png");
+    VendingMachineImage.createMaskFromColor(Color(255, 255, 255));
 
     Image easyEnemyImage;
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
@@ -56,6 +62,7 @@ int main()
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
     Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    VendingMachine vm(VendingMachineImage, 0, 0, 150, 150,"vm", map1.GetTileMap());
 
     list<Entity*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
@@ -91,17 +98,20 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
-            //стреляем по нажатию клавиши "P"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше              //стреляем по нажатию клавиши "E"
                                                                         //1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                                  p.state, map1.GetTileMap()));
                     createBulletsTimer = 0;//обнуляем таймер
                 }
+                if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
+                    vm.exchangeCoins(p);
+                }
             }
+        }
         }
 
         if (enemyOnMap){ //Если ещё не были созданы на текущей карте, то создаём
@@ -177,6 +187,10 @@ int main()
             }
         }
 
+
+
+
+
         window.clear();
 
         if ((roomNumber != p.numberOfRoom)) //&&(enemiesCount==0))
@@ -237,6 +251,7 @@ int main()
         window.draw(text);//рисуем этот текст
 
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
+        window.draw(vm.sprite);
 
         //рисуем врагов
         for (it = enemies.begin(); it != enemies.end(); it++)
