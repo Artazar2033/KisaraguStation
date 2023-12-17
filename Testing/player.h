@@ -18,6 +18,8 @@ public:
     void checkCollisionWithDoor();
 
     void update(float time); //метод "оживления/обновления" объекта класса.
+
+    //void SpawnCoin(); //метод спавна монет (не используется)
 };
 
 #endif // PLAYER

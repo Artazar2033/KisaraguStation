@@ -39,6 +39,19 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверк�
         }
 }
 
+void Enemy::SpawnCoin()
+{
+    for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
+        for (int j = x / 32; j < (x + w) / 32; j++)
+        {
+            if (TileMap[i][j] == ' ')//если элемент - пустое поле
+            {
+                TileMap[i][j]='s';
+                break;
+            }
+        }
+}
+
 void Enemy::update(float time)
 {
     if (name == "EasyEnemy"){//для персонажа с таким именем логика будет такой
