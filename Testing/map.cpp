@@ -1,12 +1,14 @@
 #include "map.h"
 
-Map::Map(string abs[HEIGHT_MAP]){
+Map::Map(string abs[HEIGHT_MAP], int numb){
     for (int i=0; i<HEIGHT_MAP; i++){
         TileMap[i]=abs[i];
     }
+    isPassed = false;
+    number = numb;
 }
 
-Map::Map() { }
+Map::Map(int numb) { isPassed = false; number = numb ;}
 
 void Map::randomMapGenerate(){//рандомно расставляем камни
     int randomElementX = 0;//переменная для хранения случайного элемента по горизонтали

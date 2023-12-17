@@ -3,7 +3,8 @@
 Player::Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap)
                 :Entity(image, X, Y, W, H, Name, MapMap){
     numberOfRoom = 1; //начальная комната - 1
-    playerScore = 0;  //монеты
+    killAllEnemies = false;
+    playerScore = 0; //монеты
     state = stay;
     if (name == "Player1"){
         //Задаем спрайту один прямоугольник для
@@ -11,6 +12,11 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
         sprite.setTextureRect(IntRect(0, 0, w, h));
     }
 }
+
+/*void Player::SpawnCoin() //метод спавна монет (не используется)
+{
+    //пусто
+}*/
 
 void Player::control(){
     if (Keyboard::isKeyPressed(Keyboard::A)) {
@@ -82,7 +88,7 @@ void Player::checkCollisionWithDoor(){
             switch (numb) {
                 case 1:
                     nextRoom = 2; //дверь всегда только справа
-                    oldJ = 23;
+                    oldJ = WIDTH_MAP - 2;
                     oldI = HEIGHT_MAP/2 + 2;
                     break;
                 case 2:
@@ -94,7 +100,7 @@ void Player::checkCollisionWithDoor(){
                     else { //дверь снизу
                         nextRoom = 3;
                         oldJ = WIDTH_MAP/2 + 2; // x
-                        oldI = 18; // y
+                        oldI = HEIGHT_MAP - 2; // y
                     }
                     break;
                 case 3:
@@ -105,7 +111,7 @@ void Player::checkCollisionWithDoor(){
                     }
                     else {//дверь справа
                         nextRoom = 4;
-                        oldJ = 23;
+                        oldJ = WIDTH_MAP - 2;
                         oldI = HEIGHT_MAP/2 + 2;
                     }
                     break;
@@ -120,16 +126,19 @@ void Player::checkCollisionWithDoor(){
 
     // Обработка перехода в следующую комнату
     if (nextRoom != -1) {
-        numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
+        if (killAllEnemies){
+            numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
 
-        int oldX = (oldJ * 32);  // X-координата центра двери
-        int oldY = (oldI * 32);  // Y-координата центра двери
+            int oldX = (oldJ * 32);  // X-координата центра двери
+            int oldY = (oldI * 32);  // Y-координата центра двери
 
-        // Вычисление новых координат в зависимости ОТ СТАРЫХ
-        x = (WIDTH_MAP)*32 - oldX;
-        y = (HEIGHT_MAP)*32 - oldY;
+            // Вычисление новых координат в зависимости ОТ СТАРЫХ
+            x = (WIDTH_MAP)*32 - oldX;
+            y = (HEIGHT_MAP)*32 - oldY;
 
-        cout << "You're in front of the door" << endl;
+            cout << "You're in front of the door" << endl;
+        }
+        else {cout << "You should kill the enemies first!" << endl;}
     }
 }
 
