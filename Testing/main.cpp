@@ -62,7 +62,7 @@ int main()
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
     Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
-    VendingMachine vm(VendingMachineImage, 0, 230, 150, 150, "vm", map1.GetTileMap()); //автомат с едой
+    //VendingMachine vm(VendingMachineImage, 0, 230, 150, 150, "vm", map1.GetTileMap()); //автомат с едой
 
     list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
@@ -111,7 +111,7 @@ int main()
                     createBulletsTimer = 0;//обнуляем таймер
                 }
                 if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
-                    vm.exchangeCoins(p);
+                    //vm.exchangeCoins(p);
                 }
             }
         }
@@ -132,8 +132,8 @@ int main()
         p.update(time); //оживляем объект “p” класса “Player”
         //оживляем врагов
 
-        if (roomNumber == 1)
-            vm.update(time);
+        //if (roomNumber == 1)
+        //    vm.update(time);
 
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
         {
@@ -283,7 +283,7 @@ int main()
         window.draw(text);//рисуем этот текст
 
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
-        window.draw(vm.sprite);
+        //window.draw(vm.sprite);
 
         //рисуем врагов
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
