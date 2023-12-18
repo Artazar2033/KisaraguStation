@@ -2,6 +2,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "arrmaps.h"
+#include "vendingmachine.h"
 
 int main()
 {
@@ -27,11 +28,12 @@ int main()
     text.setStyle(Text::Bold);//жирный текст.
 
     Image map_image;//объект изображения для карты
-    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты    
+    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты
     Texture map;//текстура карты
-    map.loadFromImage(map_image);//заряжаем текстуру картинкой    
+    map.loadFromImage(map_image);//заряжаем текстуру картинкой
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
+
 
     Map map1(ArrMap1, 1);
     Map map2(ArrMap2, 2);
@@ -46,6 +48,10 @@ int main()
     heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     //heroImage.createMaskFromColor(Color(255, 255, 255));
 
+    Image VendingMachineImage;//изображение торгового автомата для восстановления жизни
+    VendingMachineImage.loadFromFile("images/vending.png");
+    VendingMachineImage.createMaskFromColor(Color(255, 255, 255));
+
     Image easyEnemyImage;
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
     easyEnemyImage.createMaskFromColor(Color(255, 255, 255)); //убираем белый цвет
@@ -55,7 +61,8 @@ int main()
     BulletImage.createMaskFromColor(Color(255, 255, 255));
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
-    Player p(heroImage, 70, 70, 80, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    //VendingMachine vm(VendingMachineImage, 0, 230, 150, 150, "vm", map1.GetTileMap()); //автомат с едой
 
     list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
@@ -92,15 +99,19 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
+
             //стреляем по нажатию клавиши "E"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))        //стреляем по нажатию клавиши "E"
                     //если нарастили меньше 1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                                  p.state, map1.GetTileMap()));
                     createBulletsTimer = 0;//обнуляем таймер
+                }
+                if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
+                    //vm.exchangeCoins(p);
                 }
             }
         }
@@ -120,6 +131,10 @@ int main()
 
         p.update(time); //оживляем объект “p” класса “Player”
         //оживляем врагов
+
+        //if (roomNumber == 1)
+        //    vm.update(time);
+
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
         {
             (*eit)->update(time); //запускаем метод update()
@@ -181,6 +196,10 @@ int main()
                 }
             }
         }
+
+
+
+
 
         window.clear();
 
@@ -264,6 +283,7 @@ int main()
         window.draw(text);//рисуем этот текст
 
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
+        //window.draw(vm.sprite);
 
         //рисуем врагов
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
@@ -282,4 +302,5 @@ int main()
     }
     return 0;
 }
+
 

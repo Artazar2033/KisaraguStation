@@ -19,7 +19,9 @@ public:
 
     void update(float time); //метод "оживления/обновления" объекта класса.
 
+   // void gainCoin();
     //void SpawnCoin(); //метод спавна монет (не используется)
+
 };
 
 #endif // PLAYER
