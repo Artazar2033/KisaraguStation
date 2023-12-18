@@ -4,7 +4,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
                 :Entity(image, X, Y, W, H, Name, MapMap){
     numberOfRoom = 1; //начальная комната - 1
     killAllEnemies = false;
-    playerScore = 0;
+    playerScore = 0; //монеты
     state = stay;
     if (name == "Player1"){
         //Задаем спрайту один прямоугольник для
@@ -49,7 +49,7 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
                 if (Dx < 0) { x = j * 32 + 32; dx = 0; }// с левым краем карты
             }
             if (TileMap[i][j] == 's') {
-                playerScore++; //если взяли камень
+                playerScore++; //если взяли монету
                 TileMap[i][j] = ' ';
             }
             if (TileMap[i][j] == 'f') {
@@ -196,3 +196,13 @@ void Player::update(float time) //метод "оживления/обновле�
         if (health <= 0){ life = false; cout << "You're dead!" << endl; }//если жизней меньше 0, либо равно 0, то умираем
     }
 }
+
+
+/*void Player::gainCoin(){
+     playerScore++;
+}
+
+void GainLife() {
+        {
+            health += 20;
+        }*/
