@@ -2,6 +2,7 @@
 #define PLAYER
 
 #include "entity.h"
+#include "vendingmachine.h"
 
 ////////////////////////////КЛАСС ИГРОКА////////////////////////
 class Player :public Entity {
@@ -18,6 +19,8 @@ public:
     void checkCollisionWithDoor();
 
     void update(float time); //метод "оживления/обновления" объекта класса.
+
+    void exchangeCoins(VendingMachine& vm);
 
    // void gainCoin();
     //void SpawnCoin(); //метод спавна монет (не используется)

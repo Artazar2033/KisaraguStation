@@ -34,7 +34,6 @@ int main()
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-
     Map map1(ArrMap1, 1);
     Map map2(ArrMap2, 2);
     Map map3(ArrMap3, 3);
@@ -110,11 +109,41 @@ int main()
                                                  p.state, map1.GetTileMap()));
                     createBulletsTimer = 0;//обнуляем таймер
                 }
-                if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
-                    vm.exchangeCoins(p);
-                }
             }
         }
+
+        while (window.pollEvent(event))    //спавн монеты
+        {
+                  if (event.type == sf::Event::Closed)
+                      window.close();
+                  else if (event.type == sf::Event::KeyPressed)
+                  {
+                      // При нажатии клавиши "Пробел" спавним новую монетку
+                      if (event.key.code == sf::Keyboard::Space)
+                      {
+                          //vm.exchangeCoins(p);
+                          p.exchangeCoins(vm);
+                      }
+                  }
+              }
+
+    /*    if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
+            vm.exchangeCoins(p);
+        }
+*/
+
+
+    /*    bool isIntersecting = player.getGlobalBounds().vm(texture.getGlobalBounds());
+
+               if (isIntersecting)
+               {
+                   // Ваш код в случае пересечения игрока и текстуры
+               }
+               else
+               {
+                   // Ваш код в случае отсутствия пересечения игрока и текстуры
+               } */
+
 
         if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
             //Заполняем список объектами врагами

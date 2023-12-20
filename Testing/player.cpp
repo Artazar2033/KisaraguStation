@@ -1,4 +1,5 @@
 #include "player.h"
+#include "vendingmachine.h"
 
 Player::Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap)
                 :Entity(image, X, Y, W, H, Name, MapMap){
@@ -194,6 +195,14 @@ void Player::update(float time) //метод "оживления/обновле�
 
         sprite.setPosition(x, y); //спрайт в позиции (x, y).
         if (health <= 0){ life = false; cout << "You're dead!" << endl; }//если жизней меньше 0, либо равно 0, то умираем
+    }
+}
+
+void Player::exchangeCoins(VendingMachine& vm){
+    if(vm.price <= playerScore){
+        playerScore -= vm.price;
+        health += 20;
+        cout<< "Took heal!";
     }
 }
 

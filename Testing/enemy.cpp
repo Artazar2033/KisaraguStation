@@ -52,6 +52,7 @@ void Enemy::SpawnCoin()
         }
 }
 
+
 void Enemy::update(float time)
 {
     if (name == "EasyEnemy"){//для персонажа с таким именем логика будет такой
