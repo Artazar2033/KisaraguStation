@@ -131,6 +131,7 @@ int main()
         }
 
         p.update(time); //оживляем объект “p” класса “Player”
+
         //оживляем врагов
 
         if (p.life == false)
@@ -203,10 +204,6 @@ int main()
                 }
             }
         }
-
-
-
-
 
         window.clear();
 
