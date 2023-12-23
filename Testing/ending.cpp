@@ -31,7 +31,7 @@ void Ending::playAnimation(RenderWindow& originalWindow) {
             // Воспроизведение звука
             endingSound.play();
 
-        while (animationTimer.getElapsedTime().asSeconds() < 15) { // Продолжайте анимацию в течение 3 секунд (настройте под свои нужды)
+        while (animationTimer.getElapsedTime().asSeconds() < 15) {
             window.clear();
 
             // Отображение анимации
@@ -39,14 +39,14 @@ void Ending::playAnimation(RenderWindow& originalWindow) {
 
             window.display();
         }
-        // Плавное исчезновение
+        // Плавное исчезновение за 6 секунд
         Clock fadeTimer;
-        while (fadeTimer.getElapsedTime().asSeconds() < 2.0) { // Например, плавное исчезновение за 1 секунду
+        while (fadeTimer.getElapsedTime().asSeconds() < 6) {
             window.clear();
 
             // Изменение прозрачности текста
             Color textColor = text.getColor();
-            textColor.a = static_cast<sf::Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 1.0));
+            textColor.a = static_cast<Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 1.0));
             text.setColor(textColor);
 
             // Отображение анимации
