@@ -3,12 +3,13 @@
 #include "player.h"
 #include "arrmaps.h"
 #include "vendingmachine.h"
+#include "ending.h"
 
 int main()
 {
     //список констант
-    const int PLAYER_DAMAGE = 40; //урон от пули по врагу
-    const int FIRE_SPEED = 500; //скорострельность в мс
+    const int PLAYER_DAMAGE = 800; //урон от пули по врагу
+    const int FIRE_SPEED = 100; //скорострельность в мс
     int roomNumber = 1;
     const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
     bool enemyAlsoCreatedOnMap = true;
@@ -170,7 +171,7 @@ int main()
             for (eit = enemies.begin(); eit != enemies.end(); eit++){//бежим по списку врагов
                 if ((p.getRect().intersects((*eit)->getRect())) && ((*eit)->name == "EasyEnemy"))
                 {
-                    if (hpDownPlayerTimer>1000){
+                    if (hpDownPlayerTimer>100){
                         p.health -= 20;
                         cout << "you take the damage!\n";
                         hpDownPlayerTimer = 0;//обнуляем таймер
@@ -294,7 +295,13 @@ int main()
             if ((*it)->life) //если пули живы
                 window.draw((*it)->sprite); //рисуем объекты
         }
-
+        //////////////////конец игры/////////////////////
+        if ((map4.isPassed)&&(p.killAllEnemies))
+        {
+            Ending ending(window);
+            ending.playAnimation(window);
+            cout << "you won!\n";
+        }
         window.display();
     }
     return 0;
