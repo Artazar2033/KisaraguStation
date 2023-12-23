@@ -5,7 +5,7 @@ CONFIG -= qt
 
 QMAKE_CXXFLAGS += -std=c++11
 
-LIBS += -L"C:\labs again\tech_prog\Course project\KisaraguStation\SFML-2.3.2\lib"
+LIBS += -L"D:\QT CREATOR\KisaraguStation\SFML-2.3.2\lib"
 
 CONFIG(release, debug|release):
 LIBS += -lsfml-audio -lsfml-graphics -lsfml-main -lsfml-network -lsfml-window -lsfml-system
@@ -13,7 +13,7 @@ LIBS += -lsfml-audio -lsfml-graphics -lsfml-main -lsfml-network -lsfml-window -l
 CONFIG(debug, debug|release):
 LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-main-d -lsfml-network-d -lsfml-window-d -lsfml-system-d
 
-INCLUDEPATH += "C:\labs again\tech_prog\Course project\KisaraguStation\SFML-2.3.2\include"
+INCLUDEPATH += "D:\QT CREATOR\KisaraguStation\SFML-2.3.2\include"
 
 SOURCES += main.cpp \
     entity.cpp \
@@ -22,6 +22,7 @@ SOURCES += main.cpp \
     map.cpp \
     player.cpp \
     vendingmachine.cpp \
+    ending.cpp\
     deathanimation.cpp
 
 include(deployment.pri)
@@ -36,4 +37,5 @@ HEADERS += map.h \
     player.h \
     vendingmachine.h \
     coin.h \
+    ending.h\
     deathanimation.h
