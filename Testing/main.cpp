@@ -3,13 +3,14 @@
 #include "player.h"
 #include "arrmaps.h"
 #include "vendingmachine.h"
+#include "ending.h"
 #include "deathanimation.h"
 
 int main()
 {
     //список констант
     const int PLAYER_DAMAGE = 40; //урон от пули по врагу
-    const int FIRE_SPEED = 500; //скорострельность в мс
+    const int FIRE_SPEED = 100; //скорострельность в мс
     int roomNumber = 1;
     const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
     bool enemyAlsoCreatedOnMap = true;
@@ -68,7 +69,6 @@ int main()
     list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
     list<Entity*>::iterator it;//итератор класса Entity
-    //list<Entity*>::iterator b;//итератор чтобы проходить по элементам списка
     list<Enemy*>::iterator eit;//итератор по классу Enemy
 
     int createObjectForMapTimer = 0;//Переменная под время для генерирования камней
@@ -87,13 +87,7 @@ int main()
 
         createObjectForMapTimer += time;//наращиваем таймеры
         createBulletsTimer += time;
-        //hpDownEnemiesTimer += time;
         hpDownPlayerTimer += time;
-
-        //if (createObjectForMapTimer>1000){
-        //    map1.randomMapGenerate();//генерация камней
-        //    createObjectForMapTimer = 0;//обнуляем таймер
-        //}
 
         Event event;
         while (window.pollEvent(event))
@@ -104,7 +98,7 @@ int main()
             //стреляем по нажатию клавиши "E"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))        //стреляем по нажатию клавиши "E"
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))//стреляем по нажатию клавиши "E"
                     //если нарастили меньше 1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
@@ -135,10 +129,10 @@ int main()
         //оживляем врагов
 
         if (p.life == false)
-                    {
-                    DeathAnimation deathAnimation(window);
-                    deathAnimation.playAnimation(window);
-                    }
+        {
+            DeathAnimation deathAnimation(window);
+            deathAnimation.playAnimation(window);
+        }
 
         //if (roomNumber == 1)
         //    vm.update(time);
@@ -301,7 +295,13 @@ int main()
             if ((*it)->life) //если пули живы
                 window.draw((*it)->sprite); //рисуем объекты
         }
-
+        //////////////////конец игры/////////////////////
+        if ((map4.isPassed)&&(p.killAllEnemies))
+        {
+            Ending ending(window);
+            ending.playAnimation(window);
+            cout << "you won!\n";
+        }
         window.display();
     }
     return 0;

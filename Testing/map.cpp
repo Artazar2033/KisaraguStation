@@ -43,6 +43,7 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
             if (TileMap[i][j] == '!') s_map->setTextureRect(IntRect(193, 0, 32, 32));//вертикальная дверь, низ
             if (TileMap[i][j] == '(') s_map->setTextureRect(IntRect(225, 0, 32, 32));//горизонтальная дверь, лево
             if (TileMap[i][j] == ')') s_map->setTextureRect(IntRect(257, 0, 32, 32));//горизонтальная дверь, право
+            if (TileMap[i][j] == 'd') s_map->setTextureRect(IntRect(257, 0, 32, 32));//финальная дверь
             s_map->setPosition(j * 32, i * 32);
             (*window).draw(*s_map);
         }
