@@ -1,12 +1,14 @@
 #include "map.h"
 
-Map::Map(string abs[HEIGHT_MAP]){
+Map::Map(string abs[HEIGHT_MAP], int numb){
     for (int i=0; i<HEIGHT_MAP; i++){
         TileMap[i]=abs[i];
     }
+    isPassed = false;
+    number = numb;
 }
 
-Map::Map() { }
+Map::Map(int numb) { isPassed = false; number = numb ;}
 
 void Map::randomMapGenerate(){//рандомно расставляем камни
     int randomElementX = 0;//переменная для хранения случайного элемента по горизонтали
@@ -39,8 +41,8 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
             if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//сердце
             if (TileMap[i][j] == '?') s_map->setTextureRect(IntRect(162, 0, 32, 32));//вертикальная дверь, верх
             if (TileMap[i][j] == '!') s_map->setTextureRect(IntRect(193, 0, 32, 32));//вертикальная дверь, низ
-            if (TileMap[i][j] == '(') s_map->setTextureRect(IntRect(162, 0, 32, 32));//горизонтальная дверь, лево
-            if (TileMap[i][j] == ')') s_map->setTextureRect(IntRect(193, 0, 32, 32));//горизонтальная дверь, право
+            if (TileMap[i][j] == '(') s_map->setTextureRect(IntRect(225, 0, 32, 32));//горизонтальная дверь, лево
+            if (TileMap[i][j] == ')') s_map->setTextureRect(IntRect(257, 0, 32, 32));//горизонтальная дверь, право
             s_map->setPosition(j * 32, i * 32);
             (*window).draw(*s_map);
         }

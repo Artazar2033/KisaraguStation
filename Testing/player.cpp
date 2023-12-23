@@ -3,7 +3,8 @@
 Player::Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap)
                 :Entity(image, X, Y, W, H, Name, MapMap){
     numberOfRoom = 1; //начальная комната - 1
-    playerScore = 0;
+    killAllEnemies = false;
+    playerScore = 0; //монеты
     state = stay;
     if (name == "Player1"){
         //Задаем спрайту один прямоугольник для
@@ -48,7 +49,7 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
                 if (Dx < 0) { x = j * 32 + 32; dx = 0; }// с левым краем карты
             }
             if (TileMap[i][j] == 's') {
-                playerScore++; //если взяли камень
+                playerScore++; //если взяли монету
                 TileMap[i][j] = ' ';
             }
             if (TileMap[i][j] == 'f') {
@@ -87,7 +88,7 @@ void Player::checkCollisionWithDoor(){
             switch (numb) {
                 case 1:
                     nextRoom = 2; //дверь всегда только справа
-                    oldJ = 23;
+                    oldJ = WIDTH_MAP - 2;
                     oldI = HEIGHT_MAP/2 + 2;
                     break;
                 case 2:
@@ -99,7 +100,7 @@ void Player::checkCollisionWithDoor(){
                     else { //дверь снизу
                         nextRoom = 3;
                         oldJ = WIDTH_MAP/2 + 2; // x
-                        oldI = 18; // y
+                        oldI = HEIGHT_MAP - 2; // y
                     }
                     break;
                 case 3:
@@ -110,7 +111,7 @@ void Player::checkCollisionWithDoor(){
                     }
                     else {//дверь справа
                         nextRoom = 4;
-                        oldJ = 23;
+                        oldJ = WIDTH_MAP - 2;
                         oldI = HEIGHT_MAP/2 + 2;
                     }
                     break;
@@ -125,16 +126,19 @@ void Player::checkCollisionWithDoor(){
 
     // Обработка перехода в следующую комнату
     if (nextRoom != -1) {
-        numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
+        if (killAllEnemies){
+            numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
 
-        int oldX = (oldJ * 32);  // X-координата центра двери
-        int oldY = (oldI * 32);  // Y-координата центра двери
+            int oldX = (oldJ * 32);  // X-координата центра двери
+            int oldY = (oldI * 32);  // Y-координата центра двери
 
-        // Вычисление новых координат в зависимости ОТ СТАРЫХ
-        x = (WIDTH_MAP)*32 - oldX;
-        y = (HEIGHT_MAP)*32 - oldY;
+            // Вычисление новых координат в зависимости ОТ СТАРЫХ
+            x = (WIDTH_MAP)*32 - oldX;
+            y = (HEIGHT_MAP)*32 - oldY;
 
-        cout << "You're in front of the door" << endl;
+            cout << "You're in front of the door" << endl;
+        }
+        else {cout << "You should kill the enemies first!" << endl;}
     }
 }
 
@@ -189,6 +193,19 @@ void Player::update(float time) //метод "оживления/обновле�
         //state = stay;
 
         sprite.setPosition(x, y); //спрайт в позиции (x, y).
-        if (health <= 0){ life = false; cout << "You're dead!" << endl; }//если жизней меньше 0, либо равно 0, то умираем
+        if (health <= 0)
+        {
+            life = false; cout << "You're dead!" << endl;
+        }//если жизней меньше 0, либо равно 0, то умираем
     }
 }
+
+
+/*void Player::gainCoin(){
+     playerScore++;
+}
+
+void GainLife() {
+        {
+            health += 20;
+        }*/
