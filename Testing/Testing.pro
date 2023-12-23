@@ -34,4 +34,5 @@ HEADERS += map.h \
     libs.h \
     player.h \
     vendingmachine.h \
-    coin.h
+    coin.h \
+    deathanimation.h
