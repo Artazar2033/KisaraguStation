@@ -130,6 +130,7 @@ int main()
         }
 
         p.update(time); //оживляем объект “p” класса “Player”
+
         //оживляем врагов
 
         //if (roomNumber == 1)
@@ -196,10 +197,6 @@ int main()
                 }
             }
         }
-
-
-
-
 
         window.clear();
 
