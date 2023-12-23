@@ -3,6 +3,7 @@
 #include "player.h"
 #include "arrmaps.h"
 #include "vendingmachine.h"
+#include "deathanimation.h"
 
 int main()
 {

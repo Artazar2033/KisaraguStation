@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     enemy.cpp \
     map.cpp \
     player.cpp \
-    vendingmachine.cpp
+    vendingmachine.cpp \
+    deathanimation.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
