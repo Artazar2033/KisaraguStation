@@ -8,6 +8,7 @@ class Player :public Entity {
 public:
     int playerScore;//эта переменная может быть только у игрока
     int numberOfRoom;
+    bool killAllEnemies;
     Player(Image &image, float X, float Y, int W, int H, string Name, string* MapMap);
     void control();
     //Метод проверки столкновений с элементами карты
@@ -16,9 +17,11 @@ public:
     //void teleport(int* i, int* j, int* num); //метод проверки столкновения с комнатой
     void checkCollisionWithDoor();
 
-    void update(float time); //метод "оживления/обновления" объекта класса.
+    void update(float time);
 
+    //void gainCoin();
     //void SpawnCoin(); //метод спавна монет (не используется)
+
 };
 
 #endif // PLAYER

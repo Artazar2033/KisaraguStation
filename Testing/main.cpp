@@ -2,6 +2,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "arrmaps.h"
+#include "vendingmachine.h"
 
 int main()
 {
@@ -10,14 +11,14 @@ int main()
     const int FIRE_SPEED = 500; //скорострельность в мс
     int roomNumber = 1;
     const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
-    bool enemyOnMap = true;
+    bool enemyAlsoCreatedOnMap = true;
     int enemiesCount = 0; //текущее количество врагов в игре
 
     //MainMenu.start();
 
     VideoMode desktop = VideoMode::getDesktopMode();
 
-    RenderWindow window(VideoMode(800, 640, desktop.bitsPerPixel), "Station Demo");
+    RenderWindow window(VideoMode(WIDTH_MAP*32, HEIGHT_MAP*32, desktop.bitsPerPixel), "Station Demo");
 
     Font font;//шрифт
     font.loadFromFile("MP Manga.ttf");//передаем нашему шрифту файл шрифта
@@ -27,16 +28,17 @@ int main()
     text.setStyle(Text::Bold);//жирный текст.
 
     Image map_image;//объект изображения для карты
-    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты    
+    map_image.loadFromFile("images/map_new.png");//загружаем файл для карты
     Texture map;//текстура карты
-    map.loadFromImage(map_image);//заряжаем текстуру картинкой    
+    map.loadFromImage(map_image);//заряжаем текстуру картинкой
     Sprite s_map;//создаём спрайт для карты
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    Map map1(ArrMap1);
-    Map map2(ArrMap2);
-    Map map3(ArrMap3);
-    Map map4(ArrMap4);
+
+    Map map1(ArrMap1, 1);
+    Map map2(ArrMap2, 2);
+    Map map3(ArrMap3, 3);
+    Map map4(ArrMap4, 4);
 
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
@@ -45,6 +47,10 @@ int main()
     Image heroImage;
     heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     //heroImage.createMaskFromColor(Color(255, 255, 255));
+
+    Image VendingMachineImage;//изображение торгового автомата для восстановления жизни
+    VendingMachineImage.loadFromFile("images/vending.png");
+    VendingMachineImage.createMaskFromColor(Color(255, 255, 255));
 
     Image easyEnemyImage;
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
@@ -55,7 +61,8 @@ int main()
     BulletImage.createMaskFromColor(Color(255, 255, 255));
     BulletImage.createMaskFromColor(Color(0, 0, 0)); //убираем черный цвет
 
-    Player p(heroImage, 100, 100, 80, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    Player p(heroImage, 100, 100, 70, 96, "Player1", map1.GetTileMap());//объект класса игрока
+    //VendingMachine vm(VendingMachineImage, 0, 230, 150, 150, "vm", map1.GetTileMap()); //автомат с едой
 
     list<Enemy*> enemies; //список врагов
     list<Entity*> Bullets; //список пуль
@@ -75,7 +82,7 @@ int main()
         //секундах идёт вперед, пока жив игрок. Перезагружать как time его не надо.
         //оно не обновляет логику игры
         clock.restart();
-        time /= 800;
+        time /= 700;
 
         createObjectForMapTimer += time;//наращиваем таймеры
         createBulletsTimer += time;
@@ -92,20 +99,24 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
+
             //стреляем по нажатию клавиши "E"
             if (event.type == Event::KeyPressed)
             {
-                if ((event.key.code == Keyboard::E))// && (createBulletsTimer > FIRE_SPEED)) //если нарастили меньше
-                                                                        //1 секунды, то пуля не рождается
+                if ((event.key.code == Keyboard::E) && (createBulletsTimer > FIRE_SPEED) && (p.life))        //стреляем по нажатию клавиши "E"
+                    //если нарастили меньше 1 секунды, то пуля не рождается
                 {
                     Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                                  p.state, map1.GetTileMap()));
                     createBulletsTimer = 0;//обнуляем таймер
                 }
+                if (event.key.code == Keyboard::Space) {            //обмен монет на жизнь по нажатию клавиши "space"
+                    //vm.exchangeCoins(p);
+                }
             }
         }
 
-        if (enemyOnMap){ //Если ещё не были созданы на текущей карте, то создаём
+        if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
             //Заполняем список объектами врагами
             for (int i = 0; i < ENEMY_COUNT; i++)
             {
@@ -115,11 +126,16 @@ int main()
                 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
                 enemiesCount += 1; //увеличили счётчик врагов
             }
-        enemyOnMap = false;
+        enemyAlsoCreatedOnMap = false;
         }
 
         p.update(time); //оживляем объект “p” класса “Player”
+
         //оживляем врагов
+
+        //if (roomNumber == 1)
+        //    vm.update(time);
+
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
         {
             (*eit)->update(time); //запускаем метод update()
@@ -184,10 +200,32 @@ int main()
 
         window.clear();
 
-        if ((roomNumber != p.numberOfRoom)) //&&(enemiesCount==0))
+        if (enemiesCount==0) p.killAllEnemies = true;
+        if (roomNumber != p.numberOfRoom) //эти флаги меняются только при смене комнаты
         {
-            roomNumber = p.numberOfRoom;
-            enemyOnMap = true;
+            switch (roomNumber) { //p.numberOfRoom обновляется только если все враги в комнате убиты.
+            case 1: map1.isPassed = true;
+                break;
+            case 2: map2.isPassed = true;
+                break;
+            case 3: map3.isPassed = true;
+                break;
+            case 4: map4.isPassed = true;
+                break;
+            }
+
+            roomNumber = p.numberOfRoom; //обновляем комнату
+
+            switch (roomNumber) { //если эта комната была пройдена
+            case 1: if (!map1.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 2: if (!map2.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 3: if (!map3.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            case 4: if (!map4.isPassed) {enemyAlsoCreatedOnMap = true; p.killAllEnemies = false;}
+                break;
+            }
         }
         //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
         switch (roomNumber)
@@ -242,6 +280,7 @@ int main()
         window.draw(text);//рисуем этот текст
 
         window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
+        //window.draw(vm.sprite);
 
         //рисуем врагов
         for (eit = enemies.begin(); eit != enemies.end(); eit++)
@@ -260,4 +299,5 @@ int main()
     }
     return 0;
 }
+
 
