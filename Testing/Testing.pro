@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     enemy.cpp \
     map.cpp \
     player.cpp \
-    vendingmachine.cpp
+    vendingmachine.cpp \
+    deathanimation.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -34,4 +35,5 @@ HEADERS += map.h \
     libs.h \
     player.h \
     vendingmachine.h \
-    coin.h
+    coin.h \
+    deathanimation.h

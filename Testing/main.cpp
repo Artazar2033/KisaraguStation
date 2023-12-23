@@ -3,6 +3,7 @@
 #include "player.h"
 #include "arrmaps.h"
 #include "vendingmachine.h"
+#include "deathanimation.h"
 
 int main()
 {
@@ -131,6 +132,12 @@ int main()
 
         p.update(time); //оживляем объект “p” класса “Player”
         //оживляем врагов
+
+        if (p.life == false)
+                    {
+                    DeathAnimation deathAnimation(window);
+                    deathAnimation.playAnimation(window);
+                    }
 
         //if (roomNumber == 1)
         //    vm.update(time);
