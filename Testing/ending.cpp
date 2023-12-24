@@ -31,7 +31,7 @@ void Ending::playAnimation(RenderWindow& originalWindow) {
             // Воспроизведение звука
             endingSound.play();
 
-        while (animationTimer.getElapsedTime().asSeconds() < 15) {
+        while (animationTimer.getElapsedTime().asSeconds() < 10) {
             window.clear();
 
             // Отображение анимации
@@ -41,12 +41,12 @@ void Ending::playAnimation(RenderWindow& originalWindow) {
         }
         // Плавное исчезновение за 6 секунд
         Clock fadeTimer;
-        while (fadeTimer.getElapsedTime().asSeconds() < 6) {
+        while (fadeTimer.getElapsedTime().asSeconds() < 3) {
             window.clear();
 
             // Изменение прозрачности текста
             Color textColor = text.getColor();
-            textColor.a = static_cast<Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 1.0));
+            textColor.a = static_cast<Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 3.0));
             text.setColor(textColor);
 
             // Отображение анимации
@@ -56,5 +56,5 @@ void Ending::playAnimation(RenderWindow& originalWindow) {
         }
         // Возврат к основному окну игры
         window.close();
-        originalWindow.display();
+        //originalWindow.display();
     }

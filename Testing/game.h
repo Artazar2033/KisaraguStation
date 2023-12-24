@@ -1,18 +1,26 @@
 #ifndef GAME
 #define GAME
-#ifndef GAME
 
 #include "bullet.h"
 #include "enemy.h"
 #include "player.h"
 #include "vendingmachine.h"
+#include "deathanimation.h"
+#include "ending.h"
 
 const int PLAYER_DAMAGE = 40; //урон от пули по врагу
 const int FIRE_SPEED = 500; //скорострельность в мс
-const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
+const int ENEMY_COUNT = 0; //максимальное количество врагов в игре
 
 class Game {
+public:
+    Game(Image& im);
+
+    ~Game(); //на всякий случай
+
     void run();
+
+private:
     RenderWindow window;
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
@@ -48,6 +56,8 @@ class Game {
     void update();
 
     void draw();
+
+    void checkOptionForWindow();
 
     void changeMapLogic();
 };
