@@ -18,10 +18,10 @@ Ending::Ending(RenderWindow& window) : window(window) {
     animationTimer.restart();
 }
 
-void Ending::playAnimation(RenderWindow& originalWindow) {
+void Ending::playAnimation() {
     // Загрузка звукового файла
     SoundBuffer endingSoundBuffer;
-            if (!endingSoundBuffer.loadFromFile("ending_sound.wav")) {
+            if (!endingSoundBuffer.loadFromFile("sounds/ending_sound.wav")) {
                 // Обработка ошибки загрузки звукового файла
             }
 

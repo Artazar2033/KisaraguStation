@@ -10,6 +10,7 @@ Game::Game(Image& im): //loadTextures(), //loadMaps(),
     gameTime = 0;
     hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
     createBulletsTimer = 0;//Переменная под время для задержки выстрела
+    backgroundMusicTimer = 0;
 
     loadTextures();
 }
@@ -20,9 +21,14 @@ Game::~Game() { //на всякий случай
 
     for (eit = enemies.begin(); eit != enemies.end(); eit++)//проходимся по списку
             eit = enemies.erase(eit);
+
+    //gunshotSound.stop(); // Деструктор пригодился!!!!
+    //gostSound.stop();
+    //backgroundSound.stop();
 }
 
 void Game::run() {
+    //backgroundSound.play();
     while (window.isOpen()) {
         handleEvents();
         update();
@@ -54,7 +60,16 @@ void Game::loadTextures() {
     map_image.loadFromFile("images/map_new.png");//загружаем файл для карты
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
-    // Дополните этот метод, если есть еще текстуры
+
+    //backgroundBuffer.loadFromFile("sounds/Arseny-St-Hollow.wav");
+    //backgroundSound.setBuffer(backgroundBuffer);
+
+    gunshotBuffer.loadFromFile("sounds/bullet.wav");
+    gunshotSound.setBuffer(gunshotBuffer);
+
+    gostBuffer.loadFromFile("sounds/gost_death.wav");
+    gostSound.setBuffer(gostBuffer);
+
 }
 
 void Game::handleEvents() {
@@ -74,6 +89,7 @@ void Game::handleEvents() {
                 Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
                                              p.state, map1.GetTileMap()));
                 createBulletsTimer = 0;//обнуляем таймер
+                gunshotSound.play();
             }
             if (event.key.code == Keyboard::Space) { //обмен монет на жизнь по нажатию клавиши "space"
                 //vm.exchangeCoins(p);
@@ -88,17 +104,24 @@ void Game::update() {
             //секундах идёт вперед, пока жив игрок. Перезагружать как time его не надо.
             //оно не обновляет логику игры
     clock.restart();
-    time /= 700;
+    time /= 800;
 
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
+    //backgroundMusicTimer += time;
+
+    //if (backgroundMusicTimer>238000){
+    //    backgroundSound.play();
+    //    backgroundMusicTimer = 0;
+    //}
+
 
     if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            float xr = 150 + rand() % 500; // случайная координата врага на поле игры по оси “x”
-            float yr = 150 + rand() % 350; // случайная координата врага на поле игры по оси “y”
+            float xr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “x”
+            float yr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
             enemiesCount += 1; //увеличили счётчик врагов
@@ -167,6 +190,7 @@ void Game::update() {
                 if ((*eit)-> health <= 0) {
                     (*eit)-> life = false;
                     enemiesCount -= 1; //уменьшаем количество врагов в игре
+                    gostSound.play();
                     cout << "Enemy destroyed!\n";
                 }
                 (*it)-> life = false;
@@ -262,9 +286,10 @@ void Game::checkOptionForWindow(){
     }
 
     ////////////////Конец игры///////////////////////
-    if (map3.isPassed && p.killAllEnemies){
+    if (map3.isPassed && p.killAllEnemies)
+    {
         Ending ending(window);
-        ending.playAnimation(window);
+        ending.playAnimation();
         cout << "You won!!!" << endl;
     }
 }
