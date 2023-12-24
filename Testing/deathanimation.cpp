@@ -21,7 +21,7 @@ DeathAnimation::DeathAnimation(RenderWindow& window) : window(window) {
 void DeathAnimation::playAnimation(RenderWindow& originalWindow) {
     // Загрузка звукового файла
     SoundBuffer deathSoundBuffer;
-            if (!deathSoundBuffer.loadFromFile("death_sound.wav")) {
+            if (!deathSoundBuffer.loadFromFile("sounds/death_sound.wav")) {
                 // Обработка ошибки загрузки звукового файла
             }
 

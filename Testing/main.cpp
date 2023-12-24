@@ -7,6 +7,6 @@ int main() {
 
     Game game(image);
     game.run();
-
+    game.~Game();
     return 0;
 }
