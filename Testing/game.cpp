@@ -13,7 +13,6 @@ Game::Game(Image& im): //loadTextures(), //loadMaps(),
     backgroundMusicTimer = 0;
 
     loadTextures();
-    backgroundSound.play();
 }
 
 Game::~Game() { //на всякий случай
@@ -23,12 +22,13 @@ Game::~Game() { //на всякий случай
     for (eit = enemies.begin(); eit != enemies.end(); eit++)//проходимся по списку
             eit = enemies.erase(eit);
 
-    gunshotSound.stop(); // Деструктор пригодился!!!!
-    gostSound.stop();
-    backgroundSound.stop();
+    //gunshotSound.stop(); // Деструктор пригодился!!!!
+    //gostSound.stop();
+    //backgroundSound.stop();
 }
 
 void Game::run() {
+    //backgroundSound.play();
     while (window.isOpen()) {
         handleEvents();
         update();
@@ -61,14 +61,15 @@ void Game::loadTextures() {
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    backgroundBuffer.loadFromFile("sounds/Arseny-St-Hollow.wav");
-    backgroundSound.setBuffer(backgroundBuffer);
+    //backgroundBuffer.loadFromFile("sounds/Arseny-St-Hollow.wav");
+    //backgroundSound.setBuffer(backgroundBuffer);
 
     gunshotBuffer.loadFromFile("sounds/bullet.wav");
     gunshotSound.setBuffer(gunshotBuffer);
 
     gostBuffer.loadFromFile("sounds/gost_death.wav");
     gostSound.setBuffer(gostBuffer);
+
 }
 
 void Game::handleEvents() {
@@ -119,8 +120,8 @@ void Game::update() {
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            float xr = 150 + rand() % 350; // случайная координата врага на поле игры по оси “x”
-            float yr = 150 + rand() % 400; // случайная координата врага на поле игры по оси “y”
+            float xr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “x”
+            float yr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
             enemiesCount += 1; //увеличили счётчик врагов
@@ -280,14 +281,13 @@ void Game::checkOptionForWindow(){
     ////////////////Экран смерти/////////////////
     if (p.life == false)
     {
-        backgroundSound.stop();
         DeathAnimation deathAnimation(window);
         deathAnimation.playAnimation(window);
     }
 
     ////////////////Конец игры///////////////////////
-    if (map3.isPassed && p.killAllEnemies){
-        backgroundSound.stop();
+    if (map3.isPassed && p.killAllEnemies)
+    {
         Ending ending(window);
         ending.playAnimation();
         cout << "You won!!!" << endl;
