@@ -11,6 +11,8 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
         //вывода одного игрока. IntRect – для приведения типов
         sprite.setTextureRect(IntRect(0, 0, w, h));
     }
+    doorBuffer.loadFromFile("sounds/door.wav");
+    doorSound.setBuffer(doorBuffer);
 }
 
 /*void Player::SpawnCoin() //метод спавна монет (не используется)
@@ -128,6 +130,8 @@ void Player::checkCollisionWithDoor(){
     if (nextRoom != -1) {
         if (killAllEnemies){
             numberOfRoom = nextRoom;  // Обновление номера текущей комнаты
+
+            doorSound.play(); // Воспроизведение звука
 
             int oldX = (oldJ * 32);  // X-координата центра двери
             int oldY = (oldI * 32);  // Y-координата центра двери

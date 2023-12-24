@@ -7,6 +7,5 @@ int main() {
 
     Game game(image);
     game.run();
-
     return 0;
 }

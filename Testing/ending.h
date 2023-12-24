@@ -5,7 +5,7 @@
 class Ending {
 public:
     Ending(RenderWindow& window);
-    void playAnimation(RenderWindow& originalWindow);
+    void playAnimation();
 
 private:
     RenderWindow& window;
