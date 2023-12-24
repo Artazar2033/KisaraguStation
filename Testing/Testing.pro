@@ -38,4 +38,5 @@ HEADERS += map.h \
     vendingmachine.h \
     coin.h \
     ending.h\
-    deathanimation.h
+    deathanimation.h \
+    game.h
