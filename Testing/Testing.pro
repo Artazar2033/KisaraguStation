@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     player.cpp \
     vendingmachine.cpp \
     ending.cpp\
-    deathanimation.cpp
+    deathanimation.cpp \
+    game.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
