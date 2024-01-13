@@ -21,40 +21,41 @@ Ending::Ending(RenderWindow& window) : window(window) {
 void Ending::playAnimation() {
     // Загрузка звукового файла
     SoundBuffer endingSoundBuffer;
-            if (!endingSoundBuffer.loadFromFile("sounds/ending_sound.wav")) {
-                // Обработка ошибки загрузки звукового файла
-            }
+    if (!endingSoundBuffer.loadFromFile("sounds/ending_sound.wav")) {
+        // Обработка ошибки загрузки звукового файла
+    }
 
-            // Создание объекта звука
-            Sound endingSound(endingSoundBuffer);
+    // Создание объекта звука
+    Sound endingSound(endingSoundBuffer);
+    endingSound.setVolume(50);
 
-            // Воспроизведение звука
-            endingSound.play();
+    // Воспроизведение звука
+    endingSound.play();
 
-        while (animationTimer.getElapsedTime().asSeconds() < 10) {
-            window.clear();
+    while (animationTimer.getElapsedTime().asSeconds() < 10) {
+        window.clear();
 
-            // Отображение анимации
-            window.draw(text);
+        // Отображение анимации
+        window.draw(text);
 
-            window.display();
-        }
-        // Плавное исчезновение за 6 секунд
-        Clock fadeTimer;
-        while (fadeTimer.getElapsedTime().asSeconds() < 3) {
-            window.clear();
+        window.display();
+    }
+    // Плавное исчезновение за 6 секунд
+    Clock fadeTimer;
+    while (fadeTimer.getElapsedTime().asSeconds() < 3) {
+        window.clear();
 
-            // Изменение прозрачности текста
-            Color textColor = text.getColor();
-            textColor.a = static_cast<Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 3.0));
-            text.setColor(textColor);
+        // Изменение прозрачности текста
+        Color textColor = text.getColor();
+        textColor.a = static_cast<Uint8>(255 - 255 * (fadeTimer.getElapsedTime().asSeconds() / 3.0));
+        text.setColor(textColor);
 
-            // Отображение анимации
-            window.draw(text);
+        // Отображение анимации
+        window.draw(text);
 
-            window.display();
-        }
-        // Возврат к основному окну игры
-        window.close();
-        //originalWindow.display();
+        window.display();
+    }
+    // Возврат к основному окну игры
+    window.close();
+    //originalWindow.display();
     }

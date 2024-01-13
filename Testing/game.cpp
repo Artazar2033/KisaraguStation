@@ -28,7 +28,7 @@ Game::~Game() { //на всякий случай
 }
 
 void Game::run() {
-    //backgroundSound.play();
+    backgroundMusic.play();
     while (window.isOpen()) {
         handleEvents();
         update();
@@ -61,15 +61,17 @@ void Game::loadTextures() {
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    //backgroundBuffer.loadFromFile("sounds/Arseny-St-Hollow.wav");
-    //backgroundSound.setBuffer(backgroundBuffer);
+    backgroundMusic.openFromFile("sounds/Arseny-St-Hollow.wav");
+    backgroundMusic.setVolume(30); // Уровень громкости (0-100)
+    backgroundMusic.setLoop(true); // Повторять воспроизведение
 
     gunshotBuffer.loadFromFile("sounds/bullet.wav");
     gunshotSound.setBuffer(gunshotBuffer);
+    gunshotSound.setVolume(20);
 
     gostBuffer.loadFromFile("sounds/gost_death.wav");
     gostSound.setBuffer(gostBuffer);
-
+    gostSound.setVolume(20);
 }
 
 void Game::handleEvents() {
@@ -281,6 +283,7 @@ void Game::checkOptionForWindow(){
     ////////////////Экран смерти/////////////////
     if (p.life == false)
     {
+        backgroundMusic.stop();
         DeathAnimation deathAnimation(window);
         deathAnimation.playAnimation(window);
     }
@@ -288,6 +291,7 @@ void Game::checkOptionForWindow(){
     ////////////////Конец игры///////////////////////
     if (map3.isPassed && p.killAllEnemies)
     {
+        backgroundMusic.stop();
         Ending ending(window);
         ending.playAnimation();
         cout << "You won!!!" << endl;
