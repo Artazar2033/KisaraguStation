@@ -13,29 +13,142 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
     }
     doorBuffer.loadFromFile("sounds/door.wav");
     doorSound.setBuffer(doorBuffer);
+    doorSound.setVolume(50);
 }
 
-/*void Player::SpawnCoin() //метод спавна монет (не используется)
-{
-    //пусто
-}*/
-
 void Player::control(){
-    if (Keyboard::isKeyPressed(Keyboard::A)) {
+    // Переменные для отслеживания статуса клавиш
+    bool keyA = Keyboard::isKeyPressed(Keyboard::A);
+    bool keyD = Keyboard::isKeyPressed(Keyboard::D);
+    bool keyW = Keyboard::isKeyPressed(Keyboard::W);
+    bool keyS = Keyboard::isKeyPressed(Keyboard::S);
+
+    if (keyA) {
         state = left;
         speed = 0.1;
     }
-    if (Keyboard::isKeyPressed(Keyboard::D)) {
+    if (keyD) {
         state = right;
         speed = 0.1;
     }
-    if (Keyboard::isKeyPressed(Keyboard::W)) {
+    if (keyW) {
         state = up;
         speed = 0.1;
     }
-    if (Keyboard::isKeyPressed(Keyboard::S)) {
+    if (keyS) {
         state = down;
         speed = 0.1;
+    }
+    //условия движения в диагональных направлениях
+    if (keyW && keyA) {
+        state = upLeft;
+        speed = 0.1;
+    }
+    if (keyW && keyD) {
+        state = upRight;
+        speed = 0.1;
+    }
+    if (keyS && keyA) {
+        state = downLeft;
+        speed = 0.1;
+    }
+    if (keyS && keyD) {
+        state = downRight;
+        speed = 0.1;
+    }
+}
+
+void Player::update(float time) //метод "оживления/обновления" объекта класса.
+{
+    if (life) {//проверяем, жив ли герой
+        control();//функция управления персонажем
+        switch (state)//делаются различные действия в зависимости от состояния
+        {
+            case right:{//состояние идти вправо
+                dx = speed;
+                dy = 0;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 195, 96, 96));
+                break;
+            }
+            case left:{//состояние идти влево
+                dx = -speed;
+                dy = 0;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 100, 96, 96));
+                break;
+            }
+            case up:{//идти вверх
+                dx = 0;
+                dy = -speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 292, 96, 96));
+                break;
+            }
+            case down:{//идти вниз
+                dx = 0;
+                dy = speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                break;
+            }
+            case upLeft: // идти вверх-влево
+                dx = -speed;
+                dy = -speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                break;
+
+            case upRight: // идти вверх-вправо
+                dx = speed;
+                dy = -speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                break;
+
+            case downLeft: // идти вниз-влево
+                dx = -speed;
+                dy = speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                break;
+
+            case downRight: // идти вниз-вправо
+                dx = speed;
+                dy = speed;
+                CurrentFrame += 0.005*time;
+                if (CurrentFrame > 3) CurrentFrame -= 3;
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                break;
+            case stay:{//стоим
+                dy = 0;
+                dx = 0;
+                break;
+            }
+        }
+        x += dx*time; //движение по “X”
+        checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х
+        y += dy*time; //движение по “Y”
+        checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y
+
+        checkCollisionWithDoor();
+
+        speed = 0; //обнуляем скорость, чтобы персонаж остановился.
+        if (state != stay) savedState = state;
+        state = stay;
+
+        sprite.setPosition(x, y); //спрайт в позиции (x, y).
+        if (health <= 0)
+        {
+            life = false; cout << "You're dead!" << endl;
+        }//если жизней меньше 0, либо равно 0, то умираем
     }
 }
 
@@ -146,70 +259,3 @@ void Player::checkCollisionWithDoor(){
     }
 }
 
-void Player::update(float time) //метод "оживления/обновления" объекта класса.
-{
-    if (life) {//проверяем, жив ли герой
-        control();//функция управления персонажем
-        switch (state)//делаются различные действия в зависимости от состояния
-        {
-        case right:{//состояние идти вправо
-            dx = speed;
-            CurrentFrame += 0.005*time;
-            if (CurrentFrame > 3) CurrentFrame -= 3;
-            sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 195, 96, 96));
-            break;
-        }
-        case left:{//состояние идти влево
-            dx = -speed;
-            CurrentFrame += 0.005*time;
-            if (CurrentFrame > 3) CurrentFrame -= 3;
-            sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 100, 96, 96));
-            break;
-        }
-        case up:{//идти вверх
-            dy = -speed;
-            CurrentFrame += 0.005*time;
-            if (CurrentFrame > 3) CurrentFrame -= 3;
-            sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 292, 96, 96));
-            break;
-        }
-        case down:{//идти вниз
-            dy = speed;
-            CurrentFrame += 0.005*time;
-            if (CurrentFrame > 3) CurrentFrame -= 3;
-            sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
-            break;
-        }
-        case stay:{//стоим
-            dy = speed;
-            dx = speed;
-            break;
-        }
-        }
-        x += dx*time; //движение по “X”
-        checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х
-        y += dy*time; //движение по “Y”
-        checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y
-
-        checkCollisionWithDoor();
-
-        speed = 0; //обнуляем скорость, чтобы персонаж остановился.
-        //state = stay;
-
-        sprite.setPosition(x, y); //спрайт в позиции (x, y).
-        if (health <= 0)
-        {
-            life = false; cout << "You're dead!" << endl;
-        }//если жизней меньше 0, либо равно 0, то умираем
-    }
-}
-
-
-/*void Player::gainCoin(){
-     playerScore++;
-}
-
-void GainLife() {
-        {
-            health += 20;
-        }*/

@@ -28,7 +28,7 @@ Game::~Game() { //на всякий случай
 }
 
 void Game::run() {
-    //backgroundSound.play();
+    backgroundMusic.play();
     while (window.isOpen()) {
         handleEvents();
         update();
@@ -61,15 +61,17 @@ void Game::loadTextures() {
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    //backgroundBuffer.loadFromFile("sounds/Arseny-St-Hollow.wav");
-    //backgroundSound.setBuffer(backgroundBuffer);
+    backgroundMusic.openFromFile("sounds/Arseny-St-Hollow.wav");
+    backgroundMusic.setVolume(30); // Уровень громкости (0-100)
+    backgroundMusic.setLoop(true); // Повторять воспроизведение
 
     gunshotBuffer.loadFromFile("sounds/bullet.wav");
     gunshotSound.setBuffer(gunshotBuffer);
+    gunshotSound.setVolume(20);
 
     gostBuffer.loadFromFile("sounds/gost_death.wav");
     gostSound.setBuffer(gostBuffer);
-
+    gostSound.setVolume(20);
 }
 
 void Game::handleEvents() {
@@ -87,7 +89,7 @@ void Game::handleEvents() {
                 //если нарастили меньше 1 секунды, то пуля не рождается
             {
                 Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
-                                             p.state, map1.GetTileMap()));
+                                             p.savedState, map1.GetTileMap()));
                 createBulletsTimer = 0;//обнуляем таймер
                 gunshotSound.play();
             }
@@ -108,20 +110,14 @@ void Game::update() {
 
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
-    //backgroundMusicTimer += time;
-
-    //if (backgroundMusicTimer>238000){
-    //    backgroundSound.play();
-    //    backgroundMusicTimer = 0;
-    //}
 
 
     if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            float xr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “x”
-            float yr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “y”
+            float xr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “x”
+            float yr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
             enemiesCount += 1; //увеличили счётчик врагов
@@ -281,6 +277,7 @@ void Game::checkOptionForWindow(){
     ////////////////Экран смерти/////////////////
     if (p.life == false)
     {
+        backgroundMusic.stop();
         DeathAnimation deathAnimation(window);
         deathAnimation.playAnimation(window);
     }
@@ -288,6 +285,7 @@ void Game::checkOptionForWindow(){
     ////////////////Конец игры///////////////////////
     if (map3.isPassed && p.killAllEnemies)
     {
+        backgroundMusic.stop();
         Ending ending(window);
         ending.playAnimation();
         cout << "You won!!!" << endl;

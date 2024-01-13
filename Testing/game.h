@@ -39,8 +39,7 @@ private:
     list<Enemy*>::iterator eit;//итератор по классу Enemy
     Player p;
 
-    SoundBuffer backgroundBuffer;
-    Sound backgroundSound; //3:58
+    Music backgroundMusic; //3:58
     SoundBuffer gunshotBuffer;
     Sound gunshotSound;
     SoundBuffer gostBuffer;
