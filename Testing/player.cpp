@@ -13,6 +13,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
     }
     doorBuffer.loadFromFile("sounds/door.wav");
     doorSound.setBuffer(doorBuffer);
+    doorSound.setVolume(50);
 }
 
 /*void Player::SpawnCoin() //метод спавна монет (не используется)
