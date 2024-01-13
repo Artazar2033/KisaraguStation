@@ -6,7 +6,8 @@
 ////////////////////////////КЛАСС СУЩНОСТЬ////////////////////////
 class Entity {
 public:
-    enum { left, right, up, down, stay} state;// тип перечисления - состояние объекта
+    // тип перечисления - состояние объекта
+    enum { left, right, up, down, upLeft, upRight, downLeft, downRight, stay} state;
     float dx, dy, x, y, speed, moveTimer;//добавили переменную таймер для будущих целей
     int w, h, health; //переменная “health”, хранящая жизни
     bool life; //переменная “life” жизнь, логическая

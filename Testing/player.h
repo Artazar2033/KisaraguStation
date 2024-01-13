@@ -9,6 +9,7 @@ public:
     int playerScore;//эта переменная может быть только у игрока
     int numberOfRoom;
     bool killAllEnemies;
+    int savedState;
 
     SoundBuffer doorBuffer;
     Sound doorSound;

@@ -89,7 +89,7 @@ void Game::handleEvents() {
                 //если нарастили меньше 1 секунды, то пуля не рождается
             {
                 Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
-                                             p.state, map1.GetTileMap()));
+                                             p.savedState, map1.GetTileMap()));
                 createBulletsTimer = 0;//обнуляем таймер
                 gunshotSound.play();
             }
@@ -110,20 +110,14 @@ void Game::update() {
 
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
-    //backgroundMusicTimer += time;
-
-    //if (backgroundMusicTimer>238000){
-    //    backgroundSound.play();
-    //    backgroundMusicTimer = 0;
-    //}
 
 
     if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            float xr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “x”
-            float yr = 150 + rand() % 150; // случайная координата врага на поле игры по оси “y”
+            float xr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “x”
+            float yr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
             enemiesCount += 1; //увеличили счётчик врагов
