@@ -20,7 +20,7 @@ Game::~Game() { //на всякий случай
         it = Bullets.erase(it);
 
     for (eit = enemies.begin(); eit != enemies.end(); eit++)//проходимся по списку
-            eit = enemies.erase(eit);
+        eit = enemies.erase(eit);
 
     //gunshotSound.stop(); // Деструктор пригодился!!!!
     //gostSound.stop();

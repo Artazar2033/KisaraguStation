@@ -30,10 +30,9 @@ void VendingMachine::update(float time) //метод "оживления/обн�
         sprite.setPosition(x, y);
 }
 
-/*
 void draw(sf::RenderWindow& window) {
     // Отрисовка вендингового аппарата
     // ...
 }
-*/
+
 

@@ -168,8 +168,8 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
                 TileMap[i][j] = ' ';
             }
             if (TileMap[i][j] == 'f') {
-                health -= 40;//если взяли ядовитый цветок
-                TileMap[i][j] = ' ';//убрали цветок
+                health -= 40;//если наступили в ядовитую лужу
+                TileMap[i][j] = ' ';//вытерли лужу
             }
             if (TileMap[i][j] == 'h') {
                 health += 20;//если взяли сердечко
@@ -186,19 +186,30 @@ void Player::checkCollisionWithDoor(){
     for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты, соприкасающихся с игроком
         for (int j = x / 32; j<(x + w) / 32; j++)
         {
-            int checkDoor = -1;
+            enum {left, right, up, down, none} checkDoor;
+            checkDoor = none;
             // Проверка, находится ли игрок рядом с дверью
             if ((TileMap[i][j + 1] == '?' || TileMap[i][j - 1] == '?' ||
                 TileMap[i + 1][j] == '?' || TileMap[i - 1][j] == '?')||
                 (TileMap[i][j + 1] == '!' || TileMap[i][j - 1] == '!' ||
-                TileMap[i + 1][j] == '!' || TileMap[i - 1][j] == '!')) //право лево
-                    checkDoor = 0;
+                TileMap[i + 1][j] == '!' || TileMap[i - 1][j] == '!')) //лево
+                    checkDoor = left;
+            if ((TileMap[i][j + 1] == '/' || TileMap[i][j - 1] == '/' ||
+                TileMap[i + 1][j] == '/' || TileMap[i - 1][j] == '/')||
+                (TileMap[i][j + 1] == '1' || TileMap[i][j - 1] == '1' ||
+                TileMap[i + 1][j] == '1' || TileMap[i - 1][j] == '1')) //право
+                    checkDoor = right;
             if ((TileMap[i][j + 1] == '(' || TileMap[i][j - 1] == '(' ||
                 TileMap[i + 1][j] == '(' || TileMap[i - 1][j] == '(')||
                 (TileMap[i][j + 1] == ')' || TileMap[i][j - 1] == ')' ||
-                TileMap[i + 1][j] == ')' || TileMap[i - 1][j] == ')')) //верх низ
-                    checkDoor = 1;
-            if (checkDoor != -1){
+                TileMap[i + 1][j] == ')' || TileMap[i - 1][j] == ')')) //верх
+                    checkDoor = up;
+            if ((TileMap[i][j + 1] == '9' || TileMap[i][j - 1] == '9' ||
+                TileMap[i + 1][j] == '9' || TileMap[i - 1][j] == '9')||
+                (TileMap[i][j + 1] == '-' || TileMap[i][j - 1] == '-' ||
+                TileMap[i + 1][j] == '-' || TileMap[i - 1][j] == '-')) //низ
+                    checkDoor = down;
+            if (checkDoor != none){
             // Логика для определения следующей комнаты
             switch (numb) {
                 case 1:
@@ -207,33 +218,35 @@ void Player::checkCollisionWithDoor(){
                     oldI = HEIGHT_MAP/2 + 2;
                     break;
                 case 2:
-                    if (!checkDoor) { //дверь слева
+                    if (checkDoor == left) { //дверь слева
                         nextRoom = 1;
                         oldJ = 5;
                         oldI = HEIGHT_MAP/2 + 2;
                     }
-                    else { //дверь снизу
+                    if (checkDoor == down) { //дверь снизу
                         nextRoom = 3;
                         oldJ = WIDTH_MAP/2 + 2; // x
                         oldI = HEIGHT_MAP - 2; // y
                     }
                     break;
                 case 3:
-                    if (checkDoor) { //дверь сверху
+                    if (checkDoor == up) { //дверь сверху
                         nextRoom = 2;
                         oldJ = WIDTH_MAP/2 + 2;
                         oldI = 5;
                     }
-                    else {//дверь справа
+                    if (checkDoor == right) {//дверь справа
                         nextRoom = 4;
                         oldJ = WIDTH_MAP - 2;
                         oldI = HEIGHT_MAP/2 + 2;
                     }
                     break;
                 case 4:
-                    nextRoom = 3; //дверь всегда только слева
-                    oldJ = 5;
-                    oldI = HEIGHT_MAP/2 + 2;
+                    if (checkDoor == left){
+                        nextRoom = 3; //дверь всегда только слева
+                        oldJ = 5;
+                        oldI = HEIGHT_MAP/2 + 2;
+                    }
                     break;
                 }
             }
