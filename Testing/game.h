@@ -10,7 +10,7 @@
 
 const int PLAYER_DAMAGE = 40; //урон от пули по врагу
 const int FIRE_SPEED = 500; //скорострельность в мс
-const int ENEMY_COUNT = 0; //максимальное количество врагов в игре
+const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
 
 class Game {
 public:
