@@ -47,7 +47,9 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
                     //горизонтальная дверь, лево
             if ((TileMap[i][j] == ')')||(TileMap[i][j] == '-')) s_map->setTextureRect(IntRect(257, 0, 32, 32));
                     //горизонтальная дверь, право
-            if (TileMap[i][j] == 'd') s_map->setTextureRect(IntRect(257, 0, 32, 32));//финальная дверь
+            if (TileMap[i][j] == '_') s_map->setTextureRect(IntRect(257, 0, 32, 32));
+                    //дверь в сейфрум (!!!обновить спрайт!!!)
+            if (TileMap[i][j] == 'd') s_map->setTextureRect(IntRect(257, 0, 32, 32));//дверь к боссу (???)
             s_map->setPosition(j * 32, i * 32);
             (*window).draw(*s_map);
         }

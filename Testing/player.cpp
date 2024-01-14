@@ -101,7 +101,7 @@ void Player::update(float time) //метод "оживления/обновле�
                 dy = -speed;
                 CurrentFrame += 0.005*time;
                 if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 100, 96, 96));
                 break;
 
             case upRight: // идти вверх-вправо
@@ -109,7 +109,7 @@ void Player::update(float time) //метод "оживления/обновле�
                 dy = -speed;
                 CurrentFrame += 0.005*time;
                 if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 195, 96, 96));
                 break;
 
             case downLeft: // идти вниз-влево
@@ -117,7 +117,7 @@ void Player::update(float time) //метод "оживления/обновле�
                 dy = speed;
                 CurrentFrame += 0.005*time;
                 if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 100, 96, 96));
                 break;
 
             case downRight: // идти вниз-вправо
@@ -125,7 +125,7 @@ void Player::update(float time) //метод "оживления/обновле�
                 dy = speed;
                 CurrentFrame += 0.005*time;
                 if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 195, 96, 96));
                 break;
             case stay:{//стоим
                 dy = 0;
@@ -209,13 +209,29 @@ void Player::checkCollisionWithDoor(){
                 (TileMap[i][j + 1] == '-' || TileMap[i][j - 1] == '-' ||
                 TileMap[i + 1][j] == '-' || TileMap[i - 1][j] == '-')) //низ
                     checkDoor = down;
+            if ((TileMap[i][j + 1] == '_' || TileMap[i][j - 1] == '_' || //для сейфрума
+                TileMap[i + 1][j] == '_' || TileMap[i - 1][j] == '_'))
+                    checkDoor = up;
             if (checkDoor != none){
             // Логика для определения следующей комнаты
             switch (numb) {
+            case 0:
+                //дверь ИЗ сейфрума только одна
+                nextRoom = 1;
+                oldJ = WIDTH_MAP/2 + 2; // x
+                oldI = HEIGHT_MAP - 2; // y
+                break;
                 case 1:
-                    nextRoom = 2; //дверь всегда только справа
-                    oldJ = WIDTH_MAP - 2;
-                    oldI = HEIGHT_MAP/2 + 2;
+                    if (checkDoor == right) {//дверь справа
+                        nextRoom = 2; //дверь всегда только справа
+                        oldJ = WIDTH_MAP - 2;
+                        oldI = HEIGHT_MAP/2 + 2;
+                    }
+                    if (checkDoor == up) { //дверь в сейфрум
+                        nextRoom = 0;
+                        oldJ = WIDTH_MAP/2 + 2;
+                        oldI = 5;
+                    }
                     break;
                 case 2:
                     if (checkDoor == left) { //дверь слева
