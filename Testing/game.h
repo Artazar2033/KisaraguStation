@@ -14,7 +14,7 @@ const int ENEMY_COUNT = 3; //максимальное количество вр�
 
 class Game {
 public:
-    Game(Image& im);
+    Game(Image& im, Image& vmIm);
 
     ~Game(); //на всякий случай
 
@@ -30,14 +30,15 @@ private:
     Image vendingMachineImage;
     Image easyEnemyImage;
     Image BulletImage;
-    Image map_image;//объект изображения для карты
-    Texture map;
-    Sprite s_map;
+    Image map_image, safeRoom_image;//объект изображения для карты
+    Texture map, safeRoomMap; //и второй для изменения стиля сейфрума без доп вырезания
+    Sprite s_map, s_SafeRoomMap;
     list<Enemy*> enemies;
     list<Entity*> Bullets;
     list<Entity*>::iterator it;//итератор класса Entity
     list<Enemy*>::iterator eit;//итератор по классу Enemy
     Player p;
+    VendingMachine VMachine;
 
     Music backgroundMusic; //3:58
     SoundBuffer gunshotBuffer;
@@ -56,6 +57,7 @@ private:
     Map map2;
     Map map3;
     Map map4;
+    Map SafeRoom;
 
     void loadTextures();
 

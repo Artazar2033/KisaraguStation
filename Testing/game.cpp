@@ -1,11 +1,12 @@
 #include "game.h"
 #include "arrmaps.h"
 
-Game::Game(Image& im): //loadTextures(), //loadMaps(),
+Game::Game(Image& im, Image& vmIm): //loadTextures(), //loadMaps(),
     window(VideoMode(WIDTH_MAP * 32, HEIGHT_MAP * 32), "Station Demo"),
     p(im, 100, 100, 70, 96, "Player1", map1.GetTileMap()),
+    VMachine(vmIm, 334, 32, 120, 169, "vm", map1.GetTileMap()),
     text("", font, 30), map1(ArrMap1, 1), map2(ArrMap2, 2),
-    map3(ArrMap3, 3), map4(ArrMap4, 4)
+    map3(ArrMap3, 3), map4(ArrMap4, 4), SafeRoom(ArrMap0, 0)
 {
     gameTime = 0;
     hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
@@ -46,9 +47,6 @@ void Game::loadTextures() {
     //heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     //heroImage.createMaskFromColor(Color(255, 255, 255));
 
-    vendingMachineImage.loadFromFile("images/vending.png");
-    vendingMachineImage.createMaskFromColor(Color(255, 255, 255));
-
     easyEnemyImage.loadFromFile("images/enemy.png");
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
     easyEnemyImage.createMaskFromColor(Color(255, 255, 255)); //убираем белый цвет
@@ -60,6 +58,10 @@ void Game::loadTextures() {
     map_image.loadFromFile("images/map_new.png");//загружаем файл для карты
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
+
+    safeRoom_image.loadFromFile("images/map_new.png");//загружаем файл для карты безопасной комнаты
+    safeRoomMap.loadFromImage(map_image);//заряжаем текстуру картинкой
+    s_SafeRoomMap.setTexture(map);//заливаем текстуру спрайтом
 
     backgroundMusic.openFromFile("sounds/Arseny-St-Hollow.wav");
     backgroundMusic.setVolume(30); // Уровень громкости (0-100)
@@ -89,7 +91,7 @@ void Game::handleEvents() {
                 //если нарастили меньше 1 секунды, то пуля не рождается
             {
                 Bullets.push_back(new Bullet(BulletImage, p.x+32, p.y+50, 16, 16, "Bullet",
-                                             p.savedState, map1.GetTileMap()));
+                                             p.savedState, SafeRoom.GetTileMap()));
                 createBulletsTimer = 0;//обнуляем таймер
                 gunshotSound.play();
             }
@@ -112,20 +114,22 @@ void Game::update() {
     hpDownPlayerTimer += time;
 
 
-    if (enemyAlsoCreatedOnMap){ //Если ещё не были созданы на текущей карте, то создаём
+    if (enemyAlsoCreatedOnMap && roomNumber!=0){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
             float xr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “x”
             float yr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
-            enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", map1.GetTileMap()));
+            enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", SafeRoom.GetTileMap()));
+                //передали в конструктор массив сейфрума, потому что в ней нет преград
             enemiesCount += 1; //увеличили счётчик врагов
         }
     enemyAlsoCreatedOnMap = false;
     }
 
     p.update(time);
+    VMachine.update(time);
 
     //оживляем врагов
     for (eit = enemies.begin(); eit != enemies.end(); eit++)
@@ -166,7 +170,7 @@ void Game::update() {
             {
                 if (hpDownPlayerTimer>1000){
                     p.health -= 20;
-                    cout << "you take the damage!\n";
+                    cout << "You take the damage!\n";
                     hpDownPlayerTimer = 0;//обнуляем таймер
                 }
             }
@@ -205,6 +209,13 @@ void Game::draw() {
     //////////////////////Рисуем нужную карту и передаём её в существующие объекты/////////////////
     switch (roomNumber)
     {
+    case 0:
+        SafeRoom.draw(&s_SafeRoomMap, &window);
+        for (it = Bullets.begin(); it != Bullets.end(); it++)
+            {(*it)-> TileMap = SafeRoom.GetTileMap();
+        }
+        p.TileMap = SafeRoom.GetTileMap();
+        break;
     case 1:
         map1.draw(&s_map, &window);
         for (eit = enemies.begin(); eit != enemies.end(); eit++)//говорим что проходимся от начала до конца
@@ -255,7 +266,10 @@ void Game::draw() {
     window.draw(text);//рисуем этот текст
 
     window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
-    //window.draw(vm.sprite);
+
+
+    if (roomNumber == 0) window.draw(VMachine.sprite);
+    ////////////////////////////////////////////////////////////////////
 
     //рисуем врагов
     for (eit = enemies.begin(); eit != enemies.end(); eit++)
