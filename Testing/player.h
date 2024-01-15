@@ -7,6 +7,7 @@
 class Player :public Entity {
 public:
     int playerScore;//эта переменная может быть только у игрока
+    int playerKey;
     int numberOfRoom;
     bool killAllEnemies;
     int savedState;

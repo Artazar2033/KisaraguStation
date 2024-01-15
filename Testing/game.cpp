@@ -1,16 +1,19 @@
 #include "game.h"
 #include "arrmaps.h"
 
-Game::Game(Image& im, Image& vmIm): //loadTextures(), //loadMaps(),
+Game::Game(Image& im, Image& vmIm): //loadures(), //loadMaps(),
     window(VideoMode(WIDTH_MAP * 32, HEIGHT_MAP * 32), "Station Demo"),
     p(im, 100, 100, 70, 96, "Player1", map1.GetTileMap()),
     VMachine(vmIm, 334, 32, 120, 169, "vm", SafeRoom.GetTileMap()),
-    text("", font, 30), map1(ArrMap1, 1), map2(ArrMap2, 2),
+    text("", font, 30), floatingText("", font, 30), map1(ArrMap1, 1), map2(ArrMap2, 2),
     map3(ArrMap3, 3), map4(ArrMap4, 4), SafeRoom(ArrMap0, 0)
 {
     gameTime = 0;
     hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
     createBulletsTimer = 0;//Переменная под время для задержки выстрела
+    displayTimer = 0;//Переменная под время для появления текста
+    displayTime = 3000; // 3 секунды текст держится
+    fadeTime = 1000; // 1 секунда для появления и исчезновения текста
 
     loadTextures();
 }
@@ -42,6 +45,8 @@ void Game::loadTextures() {
 
     text.setColor(Color::Red);//покрасили текст в красный
     text.setStyle(Text::Bold);//жирный текст.
+    floatingText.setStyle(Text::Bold);
+    floatingText.setPosition(100, 400);//задаем позицию текста
 
     //heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     //heroImage.createMaskFromColor(Color(255, 255, 255));
@@ -102,9 +107,12 @@ void Game::handleEvents() {
                 createBulletsTimer = 0;//обнуляем таймер
                 gunshotSound.play();
             }
-            if ((event.key.code == Keyboard::Space)&&(VMachine.getRect().intersects(p.getRect()))) {
+            if ((event.key.code == Keyboard::Space)&&(VMachine.getRect().intersects(p.getRect())))
+            {
                 //обмен монет на еду при пересечении персонажа с автоматом и по нажатию клавиши "space"
-                VMachine.exchangeCoins(p);
+                if (VMachine.life)
+                    VMachine.exchangeCoins(p);
+                else cout << "Vending machine is brocken. What are you trying to achieve?" << endl;
             }
         }
     }
@@ -121,6 +129,20 @@ void Game::update() {
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
 
+    ///////////////////////////////////////вывод временного текста с надписью//////////////////////
+    if (p.playerKey != 0) {
+        displayTimer += time;
+        floatingText.setString("You picked up the mysterious key...\n How did he get into this machine?");
+        if (displayTimer < displayTime + fadeTime) {
+            // Плавное появление
+            float alpha = 255.f * std::min(1.f, displayTimer / fadeTime);
+            floatingText.setColor(sf::Color(0, 0, 0, alpha));
+        } else {
+            // Исчезновение
+            float alpha = 255.f * std::max(0.f, (displayTime + fadeTime*2 - displayTimer) / fadeTime);
+            floatingText.setColor(sf::Color(0, 0, 0, alpha));
+        }
+    }
 
     if (enemyAlsoCreatedOnMap && roomNumber!=0){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
@@ -218,6 +240,12 @@ void Game::update() {
                     VMachine.sprite.setTextureRect(IntRect(VMachine.w, 0, VMachine.w, VMachine.h));
                     VMDestroy.play();
                     cout << "You destroyed the Vending Machine!\n";
+
+                    srand(std::time(0));
+                    int randN = std::rand() % 3 + 1;
+                    for (int i = 0; i <= randN; i++)
+                        VMachine.spawnFood();
+                    VMachine.spawnKey();
                 }
                 (*it)-> life = false;
             }
@@ -289,6 +317,7 @@ void Game::draw() {
                    gameTimeString.str()+ "\nScore: " + playerScoreString.str());//задаем строку тексту
     text.setPosition(40, 27);//задаем позицию текста
     window.draw(text);//рисуем этот текст
+    window.draw(floatingText);
 
     window.draw(p.sprite);//рисуем спрайт объекта “p” класса “Player”
 

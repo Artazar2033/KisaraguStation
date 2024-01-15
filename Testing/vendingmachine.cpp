@@ -24,8 +24,8 @@ void VendingMachine::update(float time) //метод "оживления/обн�
 
 void VendingMachine::exchangeCoins(Player& player)
 {
-    if (player.playerScore >= 5) {
-        player.playerScore -= 5;
+    if (player.playerScore >= price) {
+        player.playerScore -= price;
         dealSound.play();
         spawnFood();
     }
@@ -34,8 +34,28 @@ void VendingMachine::exchangeCoins(Player& player)
 
 void VendingMachine::spawnFood()
 {
-    int i = (y+h)/32 + 1;
-    int j = (x+w)/32;
+    int i = y/32 + 1;
+    int j = (x+w)/32 + 1;
+    int schet = 1;
+    while (TileMap[i][j] == 'h')
+    {
+        j = (x+w/2)/16 - j;
+        if (schet == 2) { i++; schet = 0; }
+        schet++;
+    }
     TileMap[i][j] = 'h';
 }
 
+void VendingMachine::spawnKey()
+{
+    int i = y/32 + 1;
+    int j = (x+w)/32 + 1;
+    int schet = 1;
+    while (TileMap[i][j] == 'h')
+    {
+        j = (x+w/2)/16 - j;
+        if (schet == 2) { i++; schet = 0; }
+        schet++;
+    }
+    TileMap[i][j] = 'k';
+}

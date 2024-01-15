@@ -10,7 +10,7 @@
 
 const int PLAYER_DAMAGE = 40; //урон от пули по врагу
 const int FIRE_SPEED = 500; //скорострельность в мс
-const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
+const int ENEMY_COUNT = 0; //максимальное количество врагов в игре
 
 class Game {
 public:
@@ -25,7 +25,7 @@ private:
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
     Font font;
-    Text text;
+    Text text, floatingText;//объект текста для постоянных надписей и для всплывающих
     Image heroImage;
     Image vendingMachineImage;
     Image easyEnemyImage;
@@ -50,6 +50,8 @@ private:
     int gameTime;
     int hpDownPlayerTimer;//Переменная под время для неуязвимости игрока после получения урона
     int createBulletsTimer;//Переменная под время для задержки выстрела
+    int displayTimer;//Переменная под время для появления текста
+    float displayTime, fadeTime;// таймеры для для появления и исчезновения всплывающего текста
     Map map1;
     Map map2;
     Map map3;
