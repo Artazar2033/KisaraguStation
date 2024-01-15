@@ -41,11 +41,8 @@ private:
     VendingMachine VMachine;
 
     Music backgroundMusic; //3:58
-    SoundBuffer gunshotBuffer;
-    Sound gunshotSound;
-    SoundBuffer gostBuffer;
-    Sound gostSound;
-    float backgroundMusicTimer;
+    SoundBuffer gunshotBuffer, gostBuffer, VMTakeDamageBuf, VMDestroyBuf;
+    Sound gunshotSound, gostSound, VMTakeDamage, VMDestroy;
 
     int roomNumber = 1;
     bool enemyAlsoCreatedOnMap = true;

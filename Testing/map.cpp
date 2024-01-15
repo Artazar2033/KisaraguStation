@@ -38,7 +38,7 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
             if (TileMap[i][j] == 's') s_map->setTextureRect(IntRect(32, 0, 32, 32));
             if (TileMap[i][j] == '0') s_map->setTextureRect(IntRect(64, 0, 32, 32));
             if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//цветок
-            if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//сердце
+            if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//еда
             if ((TileMap[i][j] == '?')||(TileMap[i][j] == '/')) s_map->setTextureRect(IntRect(162, 0, 32, 32));
                     //вертикальная дверь, верх
             if ((TileMap[i][j] == '!')||(TileMap[i][j] == '1')) s_map->setTextureRect(IntRect(193, 0, 32, 32));
