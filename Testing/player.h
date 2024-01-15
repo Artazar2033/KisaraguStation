@@ -19,6 +19,7 @@ public:
     //Метод проверки столкновений с элементами карты и дверью
     void checkCollisionWithMap(float Dx, float Dy);
     void checkCollisionWithDoor();
+    void checkCollisionWithVM(float Dx, float Dy);
 
     void update(float time);
 };

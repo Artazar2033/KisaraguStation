@@ -4,14 +4,13 @@
 Game::Game(Image& im, Image& vmIm): //loadTextures(), //loadMaps(),
     window(VideoMode(WIDTH_MAP * 32, HEIGHT_MAP * 32), "Station Demo"),
     p(im, 100, 100, 70, 96, "Player1", map1.GetTileMap()),
-    VMachine(vmIm, 334, 32, 120, 169, "vm", map1.GetTileMap()),
+    VMachine(vmIm, 334, 32, 120, 169, "vm", SafeRoom.GetTileMap()),
     text("", font, 30), map1(ArrMap1, 1), map2(ArrMap2, 2),
     map3(ArrMap3, 3), map4(ArrMap4, 4), SafeRoom(ArrMap0, 0)
 {
     gameTime = 0;
     hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
     createBulletsTimer = 0;//Переменная под время для задержки выстрела
-    backgroundMusicTimer = 0;
 
     loadTextures();
 }
@@ -74,6 +73,14 @@ void Game::loadTextures() {
     gostBuffer.loadFromFile("sounds/gost_death.wav");
     gostSound.setBuffer(gostBuffer);
     gostSound.setVolume(20);
+
+    VMTakeDamageBuf.loadFromFile("sounds/VMTakeDamage.wav");
+    VMTakeDamage.setBuffer(VMTakeDamageBuf);
+    VMTakeDamage.setVolume(20);
+
+    VMDestroyBuf.loadFromFile("sounds/VMDestroy.wav");
+    VMDestroy.setBuffer(VMDestroyBuf);
+    VMDestroy.setVolume(80);
 }
 
 void Game::handleEvents() {
@@ -95,8 +102,9 @@ void Game::handleEvents() {
                 createBulletsTimer = 0;//обнуляем таймер
                 gunshotSound.play();
             }
-            if (event.key.code == Keyboard::Space) { //обмен монет на жизнь по нажатию клавиши "space"
-                //vm.exchangeCoins(p);
+            if ((event.key.code == Keyboard::Space)&&(VMachine.getRect().intersects(p.getRect()))) {
+                //обмен монет на еду при пересечении персонажа с автоматом и по нажатию клавиши "space"
+                VMachine.exchangeCoins(p);
             }
         }
     }
@@ -197,6 +205,23 @@ void Game::update() {
             }
         }
     }
+    //пересечение пули с автоматом
+    if (roomNumber == 0)
+        for (it = Bullets.begin(); it != Bullets.end(); it++){//бежим по списку пуль
+            if (((*it)->getRect().intersects(VMachine.getRect())) && ((*it)->name == "Bullet"))
+            {
+                //при попадании пули у автомата отнимается здоровье
+                VMachine.health -= PLAYER_DAMAGE;
+                VMTakeDamage.play();
+                if (VMachine.health <= 0 && VMachine.life) {
+                    VMachine.life = false;
+                    VMachine.sprite.setTextureRect(IntRect(VMachine.w, 0, VMachine.w, VMachine.h));
+                    VMDestroy.play();
+                    cout << "You destroyed the Vending Machine!\n";
+                }
+                (*it)-> life = false;
+            }
+        }
 }
 
 void Game::draw() {
@@ -295,9 +320,8 @@ void Game::checkOptionForWindow(){
         DeathAnimation deathAnimation(window);
         deathAnimation.playAnimation(window);
     }
-
     ////////////////Конец игры///////////////////////
-    if (map3.isPassed && p.killAllEnemies)
+    if ((roomNumber == 4) && map3.isPassed && p.killAllEnemies)
     {
         backgroundMusic.stop();
         Ending ending(window);
