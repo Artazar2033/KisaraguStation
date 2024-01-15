@@ -40,7 +40,7 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
             if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//ядоитая лужа
             if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//еда
 
-            if (TileMap[i][j] == 'k') s_map->setTextureRect(IntRect(32, 0, 32, 32));//ключ !!!!!!!!!!!!!!!!!!!
+            if (TileMap[i][j] == 'k') s_map->setTextureRect(IntRect(291, 0, 32, 32));//ключ !!!!!!!!!!!!!!!!!!!
 
             if ((TileMap[i][j] == '?')||(TileMap[i][j] == '/')) s_map->setTextureRect(IntRect(162, 0, 32, 32));
                     //вертикальная дверь, верх
