@@ -1,7 +1,7 @@
 #include "game.h"
 #include "arrmaps.h"
 
-Game::Game(Image& im, Image& vmIm): //loadures(), //loadMaps(),
+Game::Game(Image& im, Image& vmIm):
     window(VideoMode(WIDTH_MAP * 32, HEIGHT_MAP * 32), "Station Demo"),
     p(im, 100, 100, 70, 96, "Player1", map1.GetTileMap()),
     VMachine(vmIm, 334, 32, 120, 169, "vm", SafeRoom.GetTileMap()),
@@ -11,9 +11,8 @@ Game::Game(Image& im, Image& vmIm): //loadures(), //loadMaps(),
     gameTime = 0;
     hpDownPlayerTimer = 0;//Переменная под время для неуязвимости игрока после получения урона
     createBulletsTimer = 0;//Переменная под время для задержки выстрела
-    displayTimer = 0;//Переменная под время для появления текста
-    displayTime = 3000; // 3 секунды текст держится
-    fadeTime = 1000; // 1 секунда для появления и исчезновения текста
+    displayTextTimer = 0;//Переменная под время для появления текста
+    text1Ready, text2Ready = false;
 
     loadTextures();
 }
@@ -51,9 +50,11 @@ void Game::loadTextures() {
     //heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока
     //heroImage.createMaskFromColor(Color(255, 255, 255));
 
-    easyEnemyImage.loadFromFile("images/enemy.png");
     easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага
     easyEnemyImage.createMaskFromColor(Color(255, 255, 255)); //убираем белый цвет
+
+    miniBossImage.loadFromFile("images/miniboss.png"); // загружаем изображение врага
+    miniBossImage.createMaskFromColor(Color(255, 255, 255)); //убираем белый цвет
 
     BulletImage.loadFromFile("images/bullet.png");//загрузили картинку в объект изображения
     BulletImage.createMaskFromColor(Color(255, 255, 255));
@@ -112,7 +113,10 @@ void Game::handleEvents() {
                 //обмен монет на еду при пересечении персонажа с автоматом и по нажатию клавиши "space"
                 if (VMachine.life)
                     VMachine.exchangeCoins(p);
-                else cout << "Vending machine is brocken. What are you trying to achieve?" << endl;
+                else {
+                    displayTextTimer = 0;
+                    floatingText.setString(BROKEN_VENDING);
+                }
             }
         }
     }
@@ -129,20 +133,19 @@ void Game::update() {
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
 
-    ///////////////////////////////////////вывод временного текста с надписью//////////////////////
-    if (p.playerKey != 0) {
-        displayTimer += time;
-        floatingText.setString("You picked up the mysterious key...\n How did he get into this machine?");
-        if (displayTimer < displayTime + fadeTime) {
-            // Плавное появление
-            float alpha = 255.f * std::min(1.f, displayTimer / fadeTime);
-            floatingText.setColor(sf::Color(0, 0, 0, alpha));
-        } else {
-            // Исчезновение
-            float alpha = 255.f * std::max(0.f, (displayTime + fadeTime*2 - displayTimer) / fadeTime);
-            floatingText.setColor(sf::Color(0, 0, 0, alpha));
-        }
+    //Вывод временного текста
+    if ((p.playerKey != 0) && !text1Ready) {
+            displayTextTimer = 0;
+            floatingText.setString(PLAYER_TAKE_KEY);
+            text1Ready = true;
     }
+    if ((p.playerScore >= 50) && !text2Ready){
+            displayTextTimer = 0;
+            floatingText.setString(TOO_MUCH_MONEY);
+            text2Ready = true;
+    }
+
+    updateFloatingText(time);
 
     if (enemyAlsoCreatedOnMap && roomNumber!=0){ //Если ещё не были созданы на текущей карте, то создаём
         //Заполняем список объектами врагами
@@ -152,6 +155,14 @@ void Game::update() {
             float yr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", SafeRoom.GetTileMap()));
+                //передали в конструктор массив сейфрума, потому что в ней нет преград
+            enemiesCount += 1; //увеличили счётчик врагов
+        }
+        int countMiniBoss = rand() % 10; //в каждой комнате с вероятностью 33% может появиться один усиленный враг
+        if (countMiniBoss <= 10) {
+            float xr = 150 + rand() % 250;
+            float yr = 150 + rand() % 250;
+            enemies.push_back(new Enemy(miniBossImage, xr, yr, 96, 96, "MiniBoss", SafeRoom.GetTileMap()));
                 //передали в конструктор массив сейфрума, потому что в ней нет преград
             enemiesCount += 1; //увеличили счётчик врагов
         }
@@ -196,10 +207,11 @@ void Game::update() {
     //игрок обездвиживается и выводится сообщение "you are lose"
     if (p.life == true){//если игрок жив
         for (eit = enemies.begin(); eit != enemies.end(); eit++){//бежим по списку врагов
-            if ((p.getRect().intersects((*eit)->getRect())) && ((*eit)->name == "EasyEnemy"))
+            if ((p.getRect().intersects((*eit)->getRect())) && (((*eit)->name == "EasyEnemy")||
+                                                                ((*eit)->name == "MiniBoss")))
             {
                 if (hpDownPlayerTimer>1000){
-                    p.health -= 20;
+                    p.health -= (*eit)->damage;
                     cout << "You take the damage!\n";
                     hpDownPlayerTimer = 0;//обнуляем таймер
                 }
@@ -210,8 +222,8 @@ void Game::update() {
     //пересечение пули с врагом
     for (eit = enemies.begin(); eit != enemies.end(); eit++){//бежим по списку врагов
         for (it = Bullets.begin(); it != Bullets.end(); it++){//по списку пуль
-            if (((*it)->getRect().intersects((*eit)->getRect())) &&
-                ((*eit)->name == "EasyEnemy") && ((*it)->name == "Bullet"))
+            if (((*it)->getRect().intersects((*eit)->getRect())) && ((*it)->name == "Bullet") &&
+                (((*eit)->name == "EasyEnemy")||((*eit)->name == "MiniBoss")))
             {
                 cout << "Exellent hit!\n";
 
@@ -250,6 +262,23 @@ void Game::update() {
                 (*it)-> life = false;
             }
         }
+}
+
+void Game::updateFloatingText(float time){
+    displayTextTimer += time;
+    if (displayTextTimer < displayTime + fadeTime) {
+        // Плавное появление
+        float alpha = 255.f * std::min(1.f, displayTextTimer / fadeTime);
+        floatingText.setColor(sf::Color(0, 0, 0, alpha));
+    } else if (displayTextTimer < displayTime + 2*fadeTime){
+        // Исчезновение
+        float alpha = 255.f * std::max(0.f, (displayTime + fadeTime*2 - displayTextTimer) / fadeTime);
+        floatingText.setColor(sf::Color(0, 0, 0, alpha));
+    }
+    else {
+        // Текст полностью исчез - очищаем текст
+        floatingText.setString("");
+    }
 }
 
 void Game::draw() {

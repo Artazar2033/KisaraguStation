@@ -4,8 +4,8 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
                 :Entity(image, X, Y, W, H, Name, MapMap){
     numberOfRoom = 1; //начальная комната - 1
     killAllEnemies = false;
-    playerScore = 100; //монеты
-    playerKey = 0; //ключ
+    playerScore = 0; //монеты
+    playerKey = 0; //ключи
     state = stay;
     if (name == "Player1"){
         //Задаем спрайту один прямоугольник для

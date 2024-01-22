@@ -8,8 +8,17 @@ Enemy::Enemy(Image &image, float X, float Y, int W, int H, string Name, string* 
         sprite.setTextureRect(IntRect(0, 0, w, h));
         direction = rand() % (3); //Направление движения врага задаём случайным образом
         //через генератор случайных чисел
-        speed = 0.1;//даем скорость.этот объект всегда двигается
+        speed = 0.1;//задаем скорость. этот объект всегда двигается
         dx = speed;
+        damage = 20;
+    }
+    if (name == "MiniBoss"){
+        sprite.setTextureRect(IntRect(0, 0, w, h));
+        direction = rand() % (3);
+        health = 150;
+        speed = 0.15;//скорость и здоровье в полтора раза больше, чем у обычного призрака
+        dx = speed;
+        damage = 30;
     }
 }
 void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновений с картой
@@ -41,51 +50,63 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверк�
 
 void Enemy::SpawnCoin()
 {
-    for (int i = y / 32; i < (y + h/2) / 32; i++)//проходимся по элементам карты
-        for (int j = x / 32; j < (x + w/2) / 32; j++)
-        {
-            if (TileMap[i][j] == ' ')//если элемент - пустое поле
+    if (name == "EasyEnemy"){
+        for (int i = y / 32; i < (y + h/2) / 32; i++)//проходимся по элементам карты
+            for (int j = x / 32; j < (x + w/2) / 32; j++)
             {
-                TileMap[i][j]='s';
-                break;
+                if (TileMap[i][j] == ' ')//если элемент - пустое поле
+                {
+                    TileMap[i][j]='s';
+                    break;
+                }
             }
-        }
+    }
+    if (name == "MiniBoss"){ //больше монет!
+        for (int i = y / 32; i < (y + h + 1) / 32; i++)//проходимся по элементам карты
+            for (int j = x / 32; j < (x + w + 1) / 32; j++)
+            {
+                if (TileMap[i][j] == ' ')//если элемент - пустое поле
+                {
+                    TileMap[i][j]='s';
+                    break;
+                }
+            }
+    }
 }
 
 void Enemy::update(float time)
 {
-    if (name == "EasyEnemy"){//для персонажа с таким именем логика будет такой
-        if (life) {//проверяем, жив ли герой
-            switch (direction)//делаются различные действия в зависимости от состояния
-            {
-            case 0:{//состояние идти вправо
-                dx = speed;
-                CurrentFrame += 0.005*time;
-                if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 192, 96, 96));
-                break;
-            }
-            case 1:{//состояние идти влево
-                dx = -speed;
-                CurrentFrame += 0.005*time;
-                if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 96, 96, 96));
-                break;
-            }
-            case 2:{//идти вверх
-                dy = -speed;
-                CurrentFrame += 0.005*time;
-                if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96));
-                break;
-            }
-            case 3:{//идти вниз
-                dy = speed;
-                CurrentFrame += 0.005*time;
-                if (CurrentFrame > 3) CurrentFrame -= 3;
-                sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
-                break;
-            }
+    if ((name == "EasyEnemy") || (name == "MiniBoss")){//для персонажа с таким именем логика будет такой
+        if (life) {//проверяем, жив ли враг
+            switch (direction) {//делаются различные действия в зависимости от состояния
+                case 0:{//состояние идти вправо
+                    dx = speed;
+                    CurrentFrame += 0.005*time;
+                    if (CurrentFrame > 3) CurrentFrame -= 3;
+                    sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 192, 96, 96));
+                    break;
+                }
+                case 1:{//состояние идти влево
+                    dx = -speed;
+                    CurrentFrame += 0.005*time;
+                    if (CurrentFrame > 3) CurrentFrame -= 3;
+                    sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 96, 96, 96));
+                    break;
+                }
+                case 2:{//идти вверх
+                    dy = -speed;
+                    CurrentFrame += 0.005*time;
+                    if (CurrentFrame > 3) CurrentFrame -= 3;
+                    sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96));
+                    break;
+                }
+                case 3:{//идти вниз
+                    dy = speed;
+                    CurrentFrame += 0.005*time;
+                    if (CurrentFrame > 3) CurrentFrame -= 3;
+                    sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+                    break;
+                }
             }
             x += dx*time; //движение по “X”
             checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х
