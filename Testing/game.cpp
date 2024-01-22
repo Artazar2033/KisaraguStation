@@ -64,9 +64,9 @@ void Game::loadTextures() {
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     s_map.setTexture(map);//заливаем текстуру спрайтом
 
-    safeRoom_image.loadFromFile("images/map_new.png");//загружаем файл для карты безопасной комнаты
-    safeRoomMap.loadFromImage(map_image);//заряжаем текстуру картинкой
-    s_SafeRoomMap.setTexture(map);//заливаем текстуру спрайтом
+    safeRoom_image.loadFromFile("images/saferoom_map.png");//загружаем файл для карты безопасной комнаты
+    safeRoomMap.loadFromImage(safeRoom_image);//заряжаем текстуру картинкой
+    s_SafeRoomMap.setTexture(safeRoomMap);//заливаем текстуру спрайтом
 
     backgroundMusic.openFromFile("sounds/Arseny-St-Hollow.wav");
     backgroundMusic.setVolume(30); // Уровень громкости (0-100)
@@ -128,7 +128,7 @@ void Game::update() {
             //секундах идёт вперед, пока жив игрок. Перезагружать как time его не надо.
             //оно не обновляет логику игры
     clock.restart();
-    time /= 800;
+    time /= 700;
 
     createBulletsTimer += time; //наращиваем таймеры
     hpDownPlayerTimer += time;
@@ -151,15 +151,15 @@ void Game::update() {
         //Заполняем список объектами врагами
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            float xr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “x”
-            float yr = 150 + rand() % 250; // случайная координата врага на поле игры по оси “y”
+            float xr = 100 + rand() % 250; // случайная координата врага на поле игры по оси “x”
+            float yr = 100 + rand() % 250; // случайная координата врага на поле игры по оси “y”
             //создаем врагов и помещаем в список
             enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy", SafeRoom.GetTileMap()));
                 //передали в конструктор массив сейфрума, потому что в ней нет преград
             enemiesCount += 1; //увеличили счётчик врагов
         }
         int countMiniBoss = rand() % 10; //в каждой комнате с вероятностью 33% может появиться один усиленный враг
-        if (countMiniBoss <= 10) {
+        if (countMiniBoss <= 3) {
             float xr = 150 + rand() % 250;
             float yr = 150 + rand() % 250;
             enemies.push_back(new Enemy(miniBossImage, xr, yr, 96, 96, "MiniBoss", SafeRoom.GetTileMap()));

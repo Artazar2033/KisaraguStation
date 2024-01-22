@@ -37,7 +37,7 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
             if (TileMap[i][j] == ' ') s_map->setTextureRect(IntRect(0, 0, 32, 32));//пол
             if (TileMap[i][j] == 's') s_map->setTextureRect(IntRect(32, 0, 32, 32));//монетка
             if (TileMap[i][j] == '0') s_map->setTextureRect(IntRect(64, 0, 32, 32));//камень
-            if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//ядоитая лужа
+            if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//ядовитая лужа
             if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//еда
 
             if (TileMap[i][j] == 'k') s_map->setTextureRect(IntRect(291, 0, 32, 32));//ключ !!!!!!!!!!!!!!!!!!!
@@ -50,7 +50,7 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
                     //горизонтальная дверь, лево
             if ((TileMap[i][j] == ')')||(TileMap[i][j] == '-')) s_map->setTextureRect(IntRect(257, 0, 32, 32));
                     //горизонтальная дверь, право
-            if (TileMap[i][j] == '_') s_map->setTextureRect(IntRect(257, 0, 32, 32));
+            if (TileMap[i][j] == '_') s_map->setTextureRect(IntRect(322, 0, 32, 32));
                     //дверь в сейфрум (!!!обновить спрайт!!!)
             if (TileMap[i][j] == 'd') s_map->setTextureRect(IntRect(257, 0, 32, 32));//дверь к боссу (???)
             s_map->setPosition(j * 32, i * 32);
