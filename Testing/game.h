@@ -11,6 +11,9 @@
 const int PLAYER_DAMAGE = 40; //урон от пули по врагу
 const int FIRE_SPEED = 500; //скорострельность в мс
 const int ENEMY_COUNT = 3; //максимальное количество врагов в игре
+const string PLAYER_TAKE_KEY = "You picked up the mysterious key...\n How did he get into this machine?";
+const string TOO_MUCH_MONEY = "I have more than 50 coins...\n Maybe I should buy something?";
+const string BROKEN_VENDING = "Vending machine is brocken.\nWhat are you trying to achieve?";
 
 class Game {
 public:
@@ -25,10 +28,11 @@ private:
     Clock clock;
     Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры
     Font font;
-    Text text;
+    Text text, floatingText;//объект текста для постоянных надписей и для всплывающих
     Image heroImage;
     Image vendingMachineImage;
     Image easyEnemyImage;
+    Image miniBossImage;
     Image BulletImage;
     Image map_image, safeRoom_image;//объект изображения для карты
     Texture map, safeRoomMap; //и второй для изменения стиля сейфрума без доп вырезания
@@ -50,6 +54,9 @@ private:
     int gameTime;
     int hpDownPlayerTimer;//Переменная под время для неуязвимости игрока после получения урона
     int createBulletsTimer;//Переменная под время для задержки выстрела
+    int displayTextTimer;//Переменная под время для появления текста
+    const float displayTime = 3000, fadeTime = 1000;// таймеры для для появления и исчезновения всплывающего текста
+    bool text1Ready, text2Ready; //переменные для отслеживания готовности текстов
     Map map1;
     Map map2;
     Map map3;
@@ -61,6 +68,7 @@ private:
     void handleEvents();
 
     void update();
+    void updateFloatingText(float time);
 
     void draw();
 

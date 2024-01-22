@@ -34,11 +34,14 @@ void Map::draw(Sprite* s_map, RenderWindow* window){ //сюда можно по�
     for (int i = 0; i < HEIGHT_MAP; i++)
         for (int j = 0; j < WIDTH_MAP; j++)
         {
-            if (TileMap[i][j] == ' ') s_map->setTextureRect(IntRect(0, 0, 32, 32));
-            if (TileMap[i][j] == 's') s_map->setTextureRect(IntRect(32, 0, 32, 32));
-            if (TileMap[i][j] == '0') s_map->setTextureRect(IntRect(64, 0, 32, 32));
-            if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//цветок
+            if (TileMap[i][j] == ' ') s_map->setTextureRect(IntRect(0, 0, 32, 32));//пол
+            if (TileMap[i][j] == 's') s_map->setTextureRect(IntRect(32, 0, 32, 32));//монетка
+            if (TileMap[i][j] == '0') s_map->setTextureRect(IntRect(64, 0, 32, 32));//камень
+            if (TileMap[i][j] == 'f') s_map->setTextureRect(IntRect(96, 0, 32, 32));//ядоитая лужа
             if (TileMap[i][j] == 'h') s_map->setTextureRect(IntRect(128, 0, 32, 32));//еда
+
+            if (TileMap[i][j] == 'k') s_map->setTextureRect(IntRect(291, 0, 32, 32));//ключ !!!!!!!!!!!!!!!!!!!
+
             if ((TileMap[i][j] == '?')||(TileMap[i][j] == '/')) s_map->setTextureRect(IntRect(162, 0, 32, 32));
                     //вертикальная дверь, верх
             if ((TileMap[i][j] == '!')||(TileMap[i][j] == '1')) s_map->setTextureRect(IntRect(193, 0, 32, 32));

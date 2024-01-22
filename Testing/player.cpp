@@ -5,6 +5,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, string Name, string
     numberOfRoom = 1; //начальная комната - 1
     killAllEnemies = false;
     playerScore = 0; //монеты
+    playerKey = 0; //ключи
     state = stay;
     if (name == "Player1"){
         //Задаем спрайту один прямоугольник для
@@ -177,22 +178,13 @@ void Player::checkCollisionWithMap(float Dx, float Dy) {
                 health += 20;//если взяли сердечко
                 TileMap[i][j] = ' ';//убрали сердечко
             }
+            if (TileMap[i][j] == 'k') {
+                playerKey++; //если взяли ключ
+                TileMap[i][j] = ' ';
+            }
         }
 }
 
-/*void Player::checkCollisionWithVM(float X, float Y, int W, int H){
-    for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
-        for (int j = x / 32; j<(x + w) / 32; j++)
-        {
-            if ((i == (Y+H)/32)||(j == X/32) || (j == (X+W)/32))//если элемент - тайлик, занимаемый автоматом
-            {
-                if (dy > 0) { y = i * 32 - h; dy = 0; }//по Y
-                if (dy < 0) { y = i * 32 + 32; dy = 0; }//столкновение с верхними краями
-                if (dx > 0) { x = j * 32 - w; dx = 0; }//с правым краем карты
-                if (dx < 0) { x = j * 32 + 32; dx = 0; }// с левым краем карты
-            }
-        }
-}*/
 void Player::checkCollisionWithVM(float Dx, float Dy){
     for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
         for (int j = x / 32; j<(x + w) / 32; j++)
