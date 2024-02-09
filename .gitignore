@@ -19,3 +19,9 @@ Makefile*
 *build-*
 *.qm
 *.prl
+
+# VS
+.vs
+x64
+*.sln
+*.vcxproj*
