@@ -23,5 +23,9 @@ Makefile*
 # VS
 .vs
 x64
-*.sln
+#*.sln
 *.vcxproj*
+
+#отчеты
+*.pdf
+*.doc*
